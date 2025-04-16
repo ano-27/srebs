@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Checkout Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <h2>Order Summary</h2>
+    <p>Order ID: <strong>{{order_id}}</strong></p>
+    <p>Amount: <strong>₹{{amount}}</strong></p>
+    
+    <button id="pay-button">Pay Now</button>
+    
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        document.getElementById('pay-button').onclick = function() {
+            var options = {
+                "key": "{{key}}",
+                "amount": "{{amount}}", 
+                "currency": "INR",
+                "name": "Your Company",
+                "description": "Course Purchase",
+                "order_id": "{{order_id}}",
+                "handler": function (response) {
+                    document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                    document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+                    document.getElementById('razorpay_signature').value = response.razorpay_signature;
+                    document.getElementById('razorpay-form').submit();
+                }
+            };
+            var rzp = new Razorpay(options);
+            rzp.open();
+        };
+    </script>
+    
+    <form id="razorpay-form" action="/api/verifyPayment" method="POST" style="display: none">
+        <input type="hidden" name="order_id" id="razorpay_order_id">
+        <input type="hidden" name="payment_id" id="razorpay_payment_id">
+        <input type="hidden" name="signature" id="razorpay_signature">
+    </form>
+</body>
+</html>
