@@ -12,7 +12,7 @@ router.post('/logout', userController.logoutController);
 router.post('/profile', authenticateToken, userController.profileController);
 
 router.post('/createOrder', paymentController.createOrder);
-router.post('/verifyPayment', paymentController.verifyPayment);
 router.get('/checkout', paymentController.checkoutPage);
+router.post('/verifyPayment', paymentController.verifyPayment);
 
 module.exports = router;

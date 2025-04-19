@@ -14,7 +14,10 @@ const viewRouter = require('./route/viewRoutes.js');
 const app = express();
 
 app.use(express.static('public'));  //  Express will serve everything in public/ as if it were the root /
+
 app.use(express.json());            // Middleware to parse req.body
+app.use(express.urlencoded({ extended: true }));
+
 app.use(cookie());                  // Middleware to parse cookie
 app.engine('handlebars', exphbs.engine());
 app.set('view engine', 'handlebars');

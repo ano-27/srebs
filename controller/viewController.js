@@ -9,3 +9,7 @@ exports.loginController = async(req, res) => {
 exports.profileController = async(req, res) => {
     res.render('profile');
 }
+
+exports.homeController = async(req, res) => {
+    res.render('home');
+}

@@ -1,15 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Checkout Page</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
-    <h2>Order Summary</h2>
-    <p>Order ID: <strong>{{order_id}}</strong></p>
-    <p>Amount: <strong>₹{{amount}}</strong></p>
+
+    {{!-- <h3>  Order Summary</h3><br><br>
+    <p>  Order ID: <strong>{{order_id}}</strong></p>
+    <p><strong> </strong></p>
+    <p>  Amount: <strong>₹{{amount}}</strong></p> --}}
     
-    <button id="pay-button">Pay Now</button>
+    {{!-- <p style="margin-bottom: 10px;">Order ID: <strong>{{order_id}}</strong></p>
+    <p style="margin-bottom: 10px;">Amount: <strong>₹{{amount}}</strong></p> --}}
+    <div class="profile-container">
+        <h2>Order Summary</h2>
+        <div id="profileData">Order ID: {{order_id}}</div>
+        <div id="profileData">Amount: ₹{{amount}}</div>
+        <button id="pay-button">Pay Now</button>
+    </div>
+    
+    {{!--
+    <pre>
+    Order ID: {{order_id}}
+    Amount: ₹{{amount}}
+
+                    <button id="pay-button">Pay Now</button>
+    </pre>
+    --}}
+
+
     
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
@@ -38,5 +51,3 @@
         <input type="hidden" name="payment_id" id="razorpay_payment_id">
         <input type="hidden" name="signature" id="razorpay_signature">
     </form>
-</body>
-</html>

@@ -30,6 +30,7 @@ exports.checkoutPage = async(req, res) => {
         const order = await razorpayInstance.orders.fetch(order_id);
         const amount = order.amount / 100; 
         res.render('checkout.handlebars', {
+            layout: 'main.handlebars',
             order_id: order_id,
             amount: amount,
             key: process.env.RAZORPAY_KEY_ID
