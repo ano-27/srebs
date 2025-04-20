@@ -1,12 +1,14 @@
 const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+dotenv.config();
 
 exports.generateAccessToken = (user) => {   // Takes an object [ jwt.sign() is synchronous ]
-    const token = jwt.sign({username: user.username}, 'abcd-our-secret-key', {expiresIn: "15min"});
+    const token = jwt.sign({username: user.username}, `${process.env.ACCESS_SECRET}`, {expiresIn: "15min"});
     return token;
 }
 
 exports.generateRefreshToken = (user) => {
-    const token = jwt.sign({username: user.username}, 'cdef-this-is-also-secret-key');  // Omitting the expiresIn - - > Expirty time : Infinite
+    const token = jwt.sign({username: user.username}, `${process.env.REFRESH_SECRET}`);  // Omitting the expiresIn - - > Expirty time : Infinite
     return token;
 }
 
@@ -23,7 +25,7 @@ exports.authenticateToken = async (req, res, next) => {       // Custom middlewa
             return res.status(401).json('Invalid token');
         }
     }
-    jwt.verify(token, 'abcd-our-secret-key', async(error, decoded) => {
+    jwt.verify(token, `${process.env.ACCESS_SECRET}`, async(error, decoded) => {
         if (error) {
             return res.status(403).json('Token Expired. Something went wrong.');
         }
