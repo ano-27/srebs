@@ -19,6 +19,11 @@ module.exports = (sequelize, DataTypes) => {    // Anonymous function assigned t
                 unique: true,
                 validate: {isEmail: true}
             },
+            role: {
+                type: DataTypes.ENUM('owner', 'customer'),
+                allowNull: true,
+                defaultValue: 'customer'
+            },
             password: {
                 type: DataTypes.STRING,
                 allowNull: false

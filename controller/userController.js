@@ -57,7 +57,9 @@ exports.loginController = async(req, res) => {
         return res.status(200).json({
             message: 'Signed in successfully.',
             userData : {
+                user_id: checkUser.dataValues.id,
                 username: checkUser.dataValues.username,
+                role: checkUser.dataValues.role,
                 accessToken: accessToken,
                 refreshToken: refreshToken
             }

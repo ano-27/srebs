@@ -1,6 +1,7 @@
 const { Sequelize } = require('sequelize');
 const { DataTypes } = require ('sequelize');
-const UserModel = require('./userModel.js');  // Function
+const UserModel = require('./UserModel.js');        // Function
+const PaymentModel = require('./PaymentModel.js');  
 
 let sequelize = null;
 let models = {};
@@ -16,7 +17,8 @@ const dbConnection = async (database, username, password) => {  // Function to c
         console.log('\nConnection with database successful >>>\n');
 
         // Initialize all models : Define structure and metadata of tables
-        models.User = UserModel(sequelize, DataTypes);  
+        models.User = UserModel(sequelize, DataTypes);
+        models.Payment = PaymentModel(sequelize, DataTypes);
 
         // Sync models
         await sequelize.sync({alter: true});

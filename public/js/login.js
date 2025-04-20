@@ -19,6 +19,8 @@ document.getElementById('loginForm').addEventListener('submit', async(e) => {
             localStorage.setItem('refreshToken', data.userData.refreshToken);
             localStorage.setItem('username', data.userData.username);
             localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('user_id', data.userData.user_id);
+            localStorage.setItem('role', data.userData.role);
             document.getElementById('message').innerHTML = '<p class="success">Login successful. Redirecting to profile in 4 seconds...</p>';
             setTimeout(() => {
                 window.location.href= '/profile';

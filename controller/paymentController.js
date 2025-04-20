@@ -1,4 +1,5 @@
 const { createRazorPayInstance } = require('./../config/razorpayConfig.js');
+const { models } = require('./../models/index.js');
 const crypto = require('crypto');
 require('dotenv').config();
 
@@ -42,24 +43,54 @@ exports.checkoutPage = async(req, res) => {
 }
 
 exports.verifyPayment = async(req, res) => {
-    const { order_id, payment_id, signature } = req.body;
-    const secret = process.env.RAZORPAY_KEY_SECRET;
-
-    const hmac = crypto.createHmac("sha256", secret);
-    hmac.update(order_id + '|' + payment_id);
-
-    const generatedSignature = hmac.digest('hex');
+    try {
+        const { Payment } = models;
+        let { order_id, payment_id, signature, user_id, role, amount } = req.body;
+        let payment_by = null;
+        if (role && (role === 'customer' || role === 'owner')) {
+            payment_by = role;
+        } else {
+            payment_by = 'guest';
+            user_id = null;
+        }
+        const secret = process.env.RAZORPAY_KEY_SECRET;
     
-    if (generatedSignature == signature) {
-        // << Any DB operation that we like can be performed here >>
-        return res.status(200).json({
-            success: true,
-            message: 'Payment verified'
-        });
-    } else {
-        return res.status(500).json({
-            success: false,
-            message: 'Payment not verified'
-        })
+        const hmac = crypto.createHmac("sha256", secret);
+        hmac.update(order_id + '|' + payment_id);
+    
+        const generatedSignature = hmac.digest('hex');
+        
+        if (generatedSignature == signature) {
+            const addPayment = await Payment.create({
+                payment_by: payment_by,
+                user_id: user_id,
+                order_id: order_id,
+                status: 'success',
+                amount: amount
+            });
+            if (!addPayment) {
+                console.log('Failed to store payment record in database');
+                res.status(500).send('Failed to store payment record in database');
+            }
+            res.render('pay-verify.handlebars', {
+                message: 'Payment verified',
+                layout: 'main.handlebars',
+                order_id: order_id,
+                amount: amount,
+                status: 'success'
+            });
+        } else {
+            res.render('pay-verify.handlebars', {
+                message: 'Payment not verified',
+                layout: 'main.handlebars',
+                order_id: order_id,
+                amount: amount,
+                status: 'failure'
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Error in payment verification');
     }
+
 }
