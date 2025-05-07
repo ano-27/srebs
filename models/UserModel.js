@@ -40,5 +40,8 @@ module.exports = (sequelize, DataTypes) => {    // Anonymous function assigned t
             paranoid: true     // Soft delete - - > Extra column - - > deletedAt
         }
     );
+    User.associate = (models) => {
+        User.hasOne(models.Payment, { foreignKey: 'user_id', constraints: false });   
+    }
     return User;
 }

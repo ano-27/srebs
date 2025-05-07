@@ -1,9 +1,11 @@
 const QRCode = require('qrcode');           // Used to Generate QR
 const multer = require('multer');
-const Jimp = require('jimp');
+const { Jimp } = require('jimp');
 const QrReader = require('qrcode-reader');  // Used to Read QR
 const path = require('path');
 const fs = require('fs');
+// const Product = require('./../models/Product')
+const { models } = require ('../models/index.js'); 
 
 exports.generateQR = async (req, res) => {
     try {
@@ -31,5 +33,53 @@ exports.generateQR = async (req, res) => {
 }
 
 exports.readQR = async (req, res) => {
+    try {
+        // Check if the request contains a file
+        if (!req.file) {
+            return res.status(400).json({ error: 'No image file uploaded' });
+        }
+        console.log('\nFile path: ', req.file.path);
+        // Read the uploaded image
+        const image =  await Jimp.read(req.file.path);
 
+        // Create QR reader instance
+        const qr = new QrReader();
+
+        // Decode the QR code (using Promise)
+        const result = await new Promise((resolve, reject) => {
+            qr.callback = (err, value) => {
+                if (err) reject(err);
+                else resolve(value);
+            };
+            qr.decode(image.bitmap);
+        });
+
+        // Return the decoded data
+        // return res.json({ 
+        //     success: true, 
+        //     data: JSON.parse(result.result)
+        // });
+
+        const decodedData = JSON.parse(result.result);
+        console.log('\nDecoded info: ', decodedData);
+        return res.json({ success: true, data: decodedData });
+
+        } catch (error) {
+            // console.error("QR read error:", error);
+            return res.status(500).json({ error: error.message });
+        }
+}
+
+exports.qrOptions = async (req, res) => {
+    const { Product } = models;
+    const { product_id } = req.params;
+    const productDetails = await Product.findOne({ where: { id: product_id } });
+    console.log('\nproductDetails', productDetails);
+    res.render('qrOptions', {
+        product: { 
+            id: productDetails?.id,
+            name: productDetails?.name,
+            price: productDetails?.price
+        }
+    });
 }

@@ -7,7 +7,7 @@ const razorpayInstance = createRazorPayInstance();  // Instance of Razor Pay
 
 exports.createOrder = async(req, res) => {
     // In Production - - > Dont accept 'amount' from client - - > As, it can be changed from Inspect Element - - > Later we will fetch amount from Database using id of the entity
-    const { courseId, courseName, amount } = req.body;
+    const { paymentId, amount } = req.body;
     const options = {
         amount: amount * 100,   // An amount of 100 here in razor pay denotes - - > 1.00
         currency: "INR",

@@ -1,9 +1,111 @@
 <div class="main-wrapper">
   <div class="main-content">
     <div class="qr-icon"></div>
-    <div class="scan-title">Scan QR</div>
+    <div class="scan-title" id="scanQrButton">Scan QR</div>
+  </div>
+
+  <!-- Hidden elements for QR scanning that will appear when scan is clicked -->
+  <div id="scannerContainer" style="display: none;">
+    <video id="scanner" width="300" height="300"></video>
+    <button id="cancelScan">Cancel</button>
+    <div id="scanResult"></div>
   </div>
 
   <div class="footer-text">© 2025 SREBS</div>
 </div>
 
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const scanButton = document.getElementById('scanQrButton');
+    const scannerContainer = document.getElementById('scannerContainer');
+    const video = document.getElementById('scanner');
+    const cancelButton = document.getElementById('cancelScan');
+    const result = document.getElementById('scanResult');
+    let stream = null;
+
+    // Start scanning when "Scan QR" is clicked
+    scanButton.addEventListener('click', startScanning);
+    
+    function startScanning() {
+      scannerContainer.style.display = 'block';
+      
+      // Access the camera
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        .then(videoStream => {
+          stream = videoStream;
+          video.srcObject = stream;
+          video.play();
+          
+          // Start processing frames to detect QR code
+          scanQRCode();
+        })
+        .catch(err => {
+          result.textContent = 'Error accessing camera: ' + err.message;
+        });
+    }
+    
+    function scanQRCode() {
+      // Capture frame every 500ms
+      const interval = setInterval(() => {
+        if (!stream) {
+          clearInterval(interval);
+          return;
+        }
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // Send the frame to backend for QR processing
+        canvas.toBlob(blob => {
+          const formData = new FormData();
+          formData.append('qrImage', blob, 'qr-scan.png');
+
+          console.log('\n>>> Sending QR image to server...');
+          
+          fetch('/api/read-qr', {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => {
+            console.log('\n>>> Response received:', response);
+            return response.json();
+          })
+          .then(data => {
+            if (data.success) {
+               console.log('\n>>> Data received:', data);
+              // QR code found, stop scanning
+              clearInterval(interval);
+              stopCamera();
+              {{!-- result.textContent = 'QR Code detected: ' + JSON.stringify(data.data); --}}
+              const productId = data.data.product_id;
+              window.location.href = `api/qr-options/${productId}`;  // Redirecting to new route
+
+              scannerContainer.style.display = 'none';
+              // Process the QR data as needed for your application
+            }
+          })
+          .catch(err => {
+            console.error('Error processing QR code:', err);
+          });
+        }, 'image/jpeg');
+      }, 500);
+      
+      // Cancel button stops scanning
+      cancelButton.addEventListener('click', () => {
+        clearInterval(interval);
+        stopCamera();
+        scannerContainer.style.display = 'none';
+      });
+    }
+    
+    function stopCamera() {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+      }
+    }
+  });
+</script>

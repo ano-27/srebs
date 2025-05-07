@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
     );
 
     Payment.associate = (models) => {
-        Payment.belongsTo(models.User, { foreignKey: 'user_id', constraints: false });    // 1 entry in Payments table can belong to only one user // Payment child, User parent
+        Payment.belongsTo(models.User, { foreignKey: 'user_id', constraints: false });    // 1 entry in Payments table can belong to only one user (because in Parent, we have defined hasOne) // Payment child, User parent
     }
     return Payment;
 }
