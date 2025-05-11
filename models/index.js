@@ -54,5 +54,7 @@ const dbConnection = async (database, username, password) => {  // Function to c
 
 module.exports = {
     dbConnection,
-    models
+    models,
+    sequelize,
+    getSequelize: () => sequelize
 }

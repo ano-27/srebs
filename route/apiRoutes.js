@@ -1,6 +1,12 @@
 const { Router } = require('express');
+
+const { reqValidator } = require('../middleware/reqValidator.js');
+
+const productSchema = require('../validation/product.js');
+
 const userController = require('../controller/userController.js');
 const paymentController = require('../controller/paymentController.js');
+const productController = require('../controller/productController.js');
 const qrController = require('../controller/qrController.js');
 const { authenticateToken } = require('../auth/auth.js');
 
@@ -22,5 +28,12 @@ router.post('/generate-qr', qrController.generateQR);   // authenticate-owner mi
 router.post('/read-qr', upload.single('qrImage'), qrController.readQR);
 
 router.get('/qr-options/:product_id', qrController.qrOptions);
+
+// Product and Inventory : checkOwner middleware required later
+router.post('/register-product', reqValidator(productSchema.registerProduct), productController.registerProduct);
+router.patch('/edit-product/:id', reqValidator(productSchema.editProduct), productController.editProduct);
+router.patch('/edit-inventory/:id', reqValidator(productSchema.editProductInventory), productController.editProductInventory);
+router.post('/product-batch', reqValidator(productSchema.newBatchOfStock), productController.newBatchOfStock);
+router.delete('/delete-product/:id', productController.deleteProduct);
 
 module.exports = router;

@@ -15,7 +15,11 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false
             },
-            quantity: {
+            expiry: {
+                type: DataTypes.DATEONLY,
+                allowNull: true
+            },
+            stock: {
                 type: DataTypes.INTEGER,
                 allowNull: false
             }

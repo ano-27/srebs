@@ -1,0 +1,10 @@
+/*
+
+APIs that we might need
+
+addToCart
+removeFromCart
+emptyCart
+checkOutFromCart
+
+*/

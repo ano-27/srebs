@@ -7,6 +7,28 @@ const fs = require('fs');
 // const Product = require('./../models/Product')
 const { models } = require ('../models/index.js'); 
 
+exports.generateQRfunc = async (obj) => {
+    try {
+        let obj2 = { ...obj };
+        delete obj2.product_name;
+        const jsonData = JSON.stringify(obj2);
+        const qrDataURL = await QRCode.toDataURL(jsonData);     // Generates a QR code and returns it as a base64-encoded data URL
+        const fileName = `public/qrcodes/${ obj?.product_id }-${obj?.product_name}.png`;
+        const qrImage = qrDataURL.replace(/^data:image\/png;base64,/, "");
+
+        if (!fs.existsSync('public/qrcodes')) {
+            fs.mkdirSync('public/qrcodes', { recursive: true });
+        }
+
+        fs.writeFileSync(fileName, qrImage, 'base64');
+        return qrDataURL;
+
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+}
+
 exports.generateQR = async (req, res) => {
     try {
         const productData = req.body;

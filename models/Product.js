@@ -22,10 +22,6 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.FLOAT,
                 allowNull: false
             },
-            expiry: {
-                type: DataTypes.DATEONLY,
-                allowNull: true
-            },
             return_window: {    // days
                 type: DataTypes.INTEGER,     
                 defaultValue: 7,
@@ -41,6 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     );
     Product.associate = (models) => {
         Product.belongsTo(models.Shop, { foreignKey: 'shop_id', constraints: false });
+        Product.hasMany(models.Inventory, { foreignKey: 'product_id', constraints: false });
     }
     return Product;
 }
