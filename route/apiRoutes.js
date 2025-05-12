@@ -4,12 +4,14 @@ const { reqValidator } = require('../middleware/reqValidator.js');
 
 const productSchema = require('../validation/product.js');
 const cartSchema = require('../validation/cart.js');
+const shopSchema = require('../validation/shop.js');
 
 const userController = require('../controller/userController.js');
 const paymentController = require('../controller/paymentController.js');
 const productController = require('../controller/productController.js');
 const qrController = require('../controller/qrController.js');
 const cartController = require('../controller/cartController.js');
+const shopController = require('../controller/shopController.js');
 
 const { authenticateToken } = require('../auth/auth.js');
 
@@ -32,14 +34,17 @@ router.post('/read-qr', upload.single('qrImage'), qrController.readQR);
 
 router.get('/qr-options/:product_id', qrController.qrOptions);
 
-// Product and Inventory : checkOwner middleware required later
-router.post('/register-product', authenticateToken, reqValidator(productSchema.registerProduct), productController.registerProduct);
-router.patch('/edit-product/:id', reqValidator(productSchema.editProduct), productController.editProduct);
-router.patch('/edit-inventory/:id', reqValidator(productSchema.editProductInventory), productController.editProductInventory);
-router.post('/product-batch', reqValidator(productSchema.newBatchOfStock), productController.newBatchOfStock);
-router.delete('/delete-product/:id', productController.deleteProduct);
+// Shop
+router.post('/register-as-seller', reqValidator(shopSchema.registerSeller), shopController.registerSeller);  // Sign up user as 'owner' and populate Shop table
 
-// Cart : checkCustomer middleware required later
+// Product and Inventory : Check role = 'owner'
+router.post('/register-product', authenticateToken, reqValidator(productSchema.registerProduct), productController.registerProduct);
+router.patch('/edit-product/:id', authenticateToken, reqValidator(productSchema.editProduct), productController.editProduct);
+router.patch('/edit-inventory/:id', authenticateToken, reqValidator(productSchema.editProductInventory), productController.editProductInventory);
+router.post('/product-batch', authenticateToken, reqValidator(productSchema.newBatchOfStock), productController.newBatchOfStock);
+router.delete('/delete-product/:id', authenticateToken, productController.deleteProduct);
+
+// Cart : Check role = 'customer'
 router.post('/add-to-cart', reqValidator(cartSchema.addToCart), cartController.addToCart);
 router.delete('/remove-from-cart', cartController.removeFromCart);
 router.delete('/empty-cart', cartController.emptyCart);

@@ -78,6 +78,12 @@ exports.registerProduct = async (req, res) => {
 exports.editProduct = async (req, res) => {
     const sequelize = getSequelize();   
     const dbTrans = await sequelize.transaction();
+    if (req?.user?.role !== 'owner') {
+        return res.status(500).json({
+            success: false,
+            message: 'Seller authentication failed. Access denied.' 
+        });
+    }
     try {
         const { Product } = models;
         const checkProduct = await Product.findByPk(req?.params?.id);
@@ -122,6 +128,12 @@ exports.editProduct = async (req, res) => {
 }
 
 exports.editProductInventory = async (req, res) => {
+    if (req?.user?.role !== 'owner') {
+        return res.status(500).json({
+            success: false,
+            message: 'Seller authentication failed. Access denied.' 
+        });
+    }
     const sequelize = getSequelize();   
     const dbTrans = await sequelize.transaction();
     try {
@@ -169,6 +181,12 @@ exports.editProductInventory = async (req, res) => {
 
 // New batch of inventory (diff expiry) for the same product
 exports.newBatchOfStock = async (req, res) => {
+    if (req?.user?.role !== 'owner') {
+        return res.status(500).json({
+            success: false,
+            message: 'Seller authentication failed. Access denied.' 
+        });
+    }
     const sequelize = getSequelize();   
     const dbTrans = await sequelize.transaction();
     try {
@@ -202,6 +220,12 @@ exports.newBatchOfStock = async (req, res) => {
 }
 
 exports.deleteProduct = async (req, res) => {
+    if (req?.user?.role !== 'owner') {
+        return res.status(500).json({
+            success: false,
+            message: 'Seller authentication failed. Access denied.' 
+        });
+    }
     const sequelize = getSequelize();
     const dbTrans = await sequelize.transaction();
     try {

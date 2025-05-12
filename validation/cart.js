@@ -11,5 +11,5 @@ const addToCart = Joi.object({
 });
 
 module.exports = {
-    addToCart,
+    addToCart
 }
