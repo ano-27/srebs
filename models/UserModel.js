@@ -8,11 +8,6 @@ module.exports = (sequelize, DataTypes) => {    // Anonymous function assigned t
                 autoIncrement: true,
                 primaryKey: true
             },
-            username: {
-                type: DataTypes.STRING,
-                allowNull: false,
-                unique: true
-            },
             email: {
                 type: DataTypes.STRING,
                 allowNull: false,
@@ -41,7 +36,8 @@ module.exports = (sequelize, DataTypes) => {    // Anonymous function assigned t
         }
     );
     User.associate = (models) => {
-        User.hasOne(models.Payment, { foreignKey: 'user_id', constraints: false });   
+        User.hasMany(models.Payment, { foreignKey: 'user_id', constraints: false });    // One user can do multiple payments. Payment table can have two or more different payment_id linked to one user_id
+        User.hasMany(models.Shop, { foreignKey: 'owner_user_id', constraints: false});  // One user can be owner of multiple shops.
     }
     return User;
 }

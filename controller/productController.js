@@ -4,6 +4,13 @@ const { generateQRfunc } = require ('./qrController.js');
 exports.registerProduct = async (req, res) => {
     const sequelize = getSequelize();   
     const dbTrans = await sequelize.transaction();
+    if (req?.user?.role !== 'owner') {
+        return res.status(500).json({
+            success: false,
+            message: 'Seller authentication failed. Access denied.' 
+        });
+    }
+    console.log('\n req.user register product api', req.user);
     try {
         const { Product, Inventory } = models;
         let productData = { ...req?.body};

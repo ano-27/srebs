@@ -8,10 +8,10 @@ const { generateAccessToken, generateRefreshToken } = require('../auth/auth.js')
 exports.registerController = async(req, res) => {
     try {
         const { User } = models;
-        const {username, email, password} = req.body;
-        const existUser = await User.findOne({where: {username: username}});  // Check if user exists with same username
+        const { email, password } = req.body;
+        const existUser = await User.findOne({ where: { email: email } });  // Check if user exists with same email
         if (existUser) {
-            return res.status(409).json("Username in use. Kindly choose another username.");
+            return res.status(409).json("Email in use. Kindly use another email.");
         } else {
             const hashedPass = await bcryptjs.hash(password, 10);
             const createUser = await User.create({
@@ -21,7 +21,7 @@ exports.registerController = async(req, res) => {
             return res.status(201).json({
                 message: "Registration successful.",
                 userData: {
-                    username: createUser.username,
+                    id: createUser.id,
                     email: createUser.email
                 }
             });
@@ -36,11 +36,17 @@ exports.registerController = async(req, res) => {
 exports.loginController = async(req, res) => {
     try {
         const { User } = models; 
-        const {username, email, password} = req.body;
-        const checkUser = await User.findOne({where: {username: username}}); // checkUser will now contain the user record (as a Sequelize model instance) if found, or null if not.
+        const { email, password } = req.body;
+        const checkUser = await User.findOne(
+            {
+                where: {
+                    email: email
+                }
+            }
+        ); // checkUser will now contain the user record (as a Sequelize model instance) if found, or null if not.
 
         if (!checkUser) {
-            return res.status(401).json('Username does not exist. New User? Pls Sign Up');
+            return res.status(401).json('Email does not exist. New User? Pls Sign Up');
         }
         const isValid = await bcryptjs.compare(password, checkUser?.password);
         if (!isValid) {
@@ -58,7 +64,7 @@ exports.loginController = async(req, res) => {
             message: 'Signed in successfully.',
             userData : {
                 user_id: checkUser.dataValues.id,
-                username: checkUser.dataValues.username,
+                email: checkUser.dataValues.email,
                 role: checkUser.dataValues.role,
                 accessToken: accessToken,
                 refreshToken: refreshToken
@@ -70,7 +76,7 @@ exports.loginController = async(req, res) => {
     }
 }
 
-// Function to generate Access Token from Refresh Token stored in Client's cookie // My edit: Also store new access token in cookie
+// << NOT IN USE >>: Function to generate Access Token from Refresh Token stored in Client's cookie // My edit: Also store new access token in cookie
 exports.refreshController = async(req, res) => {
     const refreshToken = req.cookies.refreshToken;  // Requesting refreshToken from Client's cookie
     try {
@@ -94,7 +100,7 @@ exports.refreshController = async(req, res) => {
     }
 }
 
-// Logout: Clear the refreshToken from cookie as well as from User database       // My edit: Also remove accessToken from cookie
+// Logout: Clear refreshToken, accessToken from cookie and clear refreshToken from User database
 exports.logoutController = async(req, res) => {
     try {
         const { User } = models;
@@ -102,9 +108,17 @@ exports.logoutController = async(req, res) => {
         if (!refreshToken) {
             return res.status(403).json('Token is empty');
         }
-        const user = await User.findOne({where: {refreshToken: refreshToken}});
+        const user = await User.findOne(
+            {
+                where: {
+                    refreshToken: refreshToken
+                }
+            }
+        );
         if (user) {
-            await user.update({refreshToken: null});
+            await user.update(
+                { refreshToken: null }
+            );
         }
         res.clearCookie('refreshToken');
         res.clearCookie('accessToken');

@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true,
                 primaryKey: true
             },
+            owner_user_id: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
             is_active: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false
@@ -33,6 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     );
     Shop.associate = (models) => {
         Shop.hasMany(models.Product, { foreignKey: 'shop_id', constraints: false });
+        Shop.belongsTo(models.User, { foreignKey: 'owner_user_id', constraints: false });
     }
     return Shop;
 }
