@@ -1,0 +1,329 @@
+/* root/public/css/styles.css */
+:root {
+  --primary-color: #4a6fa5;
+  --secondary-color: #334e68;
+  --accent-color: #5cdb95;
+  --background-color: #f8f9fa;
+  --text-color: #333;
+  --error-color: #e74c3c;
+  --success-color: #2ecc71;
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --border-radius: 8px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.form-container {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 450px;
+  position: relative;
+}
+
+.form-container h2 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.25rem;
+  position: relative;
+}
+
+.form-container h2::after {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 3px;
+  background-color: var(--accent-color);
+  margin: 0.5rem auto 0;
+  border-radius: 2px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 0.5rem;
+  color: var(--secondary-color);
+  font-weight: 500;
+}
+
+input {
+  padding: 0.75rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.2);
+}
+
+button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 0.5rem;
+}
+
+button:hover {
+  background-color: var(--secondary-color);
+}
+
+#message {
+  margin-top: 1.5rem;
+  padding: 0.75rem;
+  border-radius: var(--border-radius);
+  text-align: center;
+  min-height: 50px;
+}
+
+#message.error {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: var(--error-color);
+  border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+#message.success {
+  background-color: rgba(46, 204, 113, 0.1);
+  color: var(--success-color);
+  border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+@media (max-width: 500px) {
+  .form-container {
+    padding: 1.5rem;
+  }
+  
+  body {
+    padding: 10px;
+  }
+}
+
+/* Home page specific styles. home.handlebars */
+
+.nav-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 100;
+  }
+  
+  .hamburger-menu {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .hamburger-icon {
+    width: 25px;
+    height: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .hamburger-icon span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background-color: var(--primary-color);
+    border-radius: 3px;
+    transition: transform 0.3s ease;
+  }
+  
+  .user-options {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  .nav-option {
+    color: var(--text-color);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    transition: background-color 0.3s;
+    font-weight: 500;
+  }
+  
+  .nav-option:hover {
+    background-color: rgba(74, 111, 165, 0.1);
+  }
+  
+  .nav-option.selected {
+    background-color: var(--primary-color);
+    color: white;
+  }
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+  
+  .main-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;  /* centers QR icon + button vertically */
+    align-items: center;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .qr-icon {
+    width: 200px;
+    height: 200px;
+    background-image: linear-gradient(to right, #888888 50%, transparent 25%),
+                      linear-gradient(to right, #888888 50%, transparent 25%),
+                      linear-gradient(to bottom, #888888 50%, transparent 25%),
+                      linear-gradient(to bottom, #888888 50%, transparent 25%);
+    background-position: top left, bottom left, top left, top right;
+    background-size: 40% 3px, 40% 3px, 3px 40%, 3px 40%;
+    background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+    opacity: 0.5;
+    margin-bottom: 1.5rem;
+  }
+  
+  .scan-title {
+    font-size: 1rem;
+    color: var(--primary-color);
+    background-color: rgba(74, 111, 165, 0.1);
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    border: 2px solid rgba(74, 111, 165, 0.2);
+    transition: background-color 0.2s, transform 0.2s;
+    white-space: nowrap;
+    width: fit-content;
+    max-width: 80vw;
+    box-sizing: border-box;
+  }
+
+    
+  .scan-title:hover {
+    background-color: rgba(74, 111, 165, 0.2);
+    transform: translateY(-2px);
+  }
+  
+  .footer-text {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #999;
+    padding: 1rem;
+  }
+  
+  
+  @media (max-width: 600px) {
+    .user-options {
+      gap: 0.5rem;
+    }
+    
+    .nav-option {
+      padding: 0.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .scan-title {
+      font-size: 2.5rem;
+    }
+  }
+  
+  /* Hamburger menu functionality */
+.hamburger-icon.active span:nth-child(1) {
+    transform: translateY(8.5px) rotate(45deg);
+  }
+  
+  .hamburger-icon.active span:nth-child(2) {
+    opacity: 0;
+  }
+  
+  .hamburger-icon.active span:nth-child(3) {
+    transform: translateY(-8.5px) rotate(-45deg);
+  }
+  
+  /* Menu panel that appears when hamburger is clicked */
+  .menu-panel {
+    position: fixed;
+    top: 60px;
+    left: -250px;
+    width: 250px;
+    height: calc(100vh - 60px);
+    background-color: white;
+    box-shadow: var(--box-shadow);
+    transition: left 0.3s ease;
+    z-index: 90;
+  }
+  
+  .nav-container.menu-open .menu-panel {
+    left: 0;
+  }
+
+  /* Menu panel styling */
+.menu-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+  }
+  
+  .menu-content li {
+    padding: 0;
+  }
+  
+  .menu-content a {
+    display: block;
+    padding: 1rem 1.5rem;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: background-color 0.2s;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .menu-content a:hover {
+    background-color: rgba(74, 111, 165, 0.1);
+    color: var(--primary-color);
+  }
