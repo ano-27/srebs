@@ -46,11 +46,17 @@ exports.loginController = async(req, res) => {
         ); // checkUser will now contain the user record (as a Sequelize model instance) if found, or null if not.
 
         if (!checkUser) {
-            return res.status(401).json('Email does not exist. New User? Pls Sign Up');
+            return res.status(401).json({
+                success: false,
+                message: 'Email does not exist. New User? Pls Sign Up'
+            });
         }
         const isValid = await bcryptjs.compare(password, checkUser?.password);
         if (!isValid) {
-            return res.status(401).json('Invalid password');
+            return res.status(401).json({
+                success: false,
+                message: 'Invalid password'
+            });
         }
         const accessToken = generateAccessToken(checkUser);     // Sequelize by default performs - - > .toJSON() - - > which only returns the 'dataValues' part of the Sequelize object as response
         const refreshToken = generateRefreshToken(checkUser);
@@ -72,7 +78,10 @@ exports.loginController = async(req, res) => {
         });
     } catch (err) {
         console.log(err);
-        return res.status(500).json('INTERNAL ERROR');
+        return res.status(500).json({
+            success: false,
+            message: 'INTERNAL ERROR'
+        });
     }
 }
 

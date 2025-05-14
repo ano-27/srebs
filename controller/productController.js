@@ -268,3 +268,18 @@ exports.deleteProduct = async (req, res) => {
         });  
     }
 }
+
+exports.productList = async (req, res) => {
+    const { Shop, Product } = models;
+    const shopDetails = await Shop.findOne({
+        where: {
+            owner_user_id: req?.user?.id 
+        }
+    });
+    const products = await Product.findAll({
+        where: {
+            shop_id: shopDetails?.id
+        }
+    });
+    return products;
+}
