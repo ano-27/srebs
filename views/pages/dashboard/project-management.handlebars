@@ -1,0 +1,58 @@
+<div class="project-management">
+    <h2>Product Management</h2>
+    
+    <div class="actions">
+        <button id="add-product">Add New Product</button>
+    </div>
+    
+    <table class="products-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each products}}
+            <tr>
+                <td>{{this.id}}</td>
+                <td>{{this.name}}</td>
+                <td>{{this.price}}</td>
+                <td>{{this.stock}}</td>
+                <td>
+                    <button class="edit-product" data-id="{{this.id}}">Edit</button>
+                    <button class="delete-product" data-id="{{this.id}}">Delete</button>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    
+    <div id="product-form-container" style="display: none;">
+        <h3>Add/Edit Product</h3>
+        <form id="product-form">
+            <input type="hidden" id="product_id" name="id">
+            <div class="form-group">
+                <label for="name">Product Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="price">Price</label>
+                <input type="number" id="price" name="price" required>
+            </div>
+            <div class="form-group">
+                <label for="stock">Stock</label>
+                <input type="number" id="stock" name="stock" required>
+            </div>
+            <div class="form-group">
+                <label for="expiry">Expiry Date</label>
+                <input type="date" id="expiry" name="expiry">
+            </div>
+            <button type="submit">Save Product</button>
+            <button type="button" id="cancel-form">Cancel</button>
+        </form>
+    </div>
+</div>

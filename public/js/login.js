@@ -2,31 +2,37 @@ console.log('Login script loaded');
 document.getElementById('loginForm').addEventListener('submit', async(e) => {
     e.preventDefault();
 
-    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
     try {
-        const response = await fetch('/api/login', {                    // Hit api/login
+        const response = await fetch('/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({username, password})
+            body: JSON.stringify({ email, password })
         });
         const data = await response.json();
-        if (response.ok) {
+        if (response.ok) {  
             localStorage.setItem('accessToken', data.userData.accessToken);      // Store tokens locally (not cookies) - - > Will be used to pass authorization in headings to backend
             localStorage.setItem('refreshToken', data.userData.refreshToken);
-            localStorage.setItem('username', data.userData.username);
+            localStorage.setItem('email', data.userData.email);
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('user_id', data.userData.user_id);
             localStorage.setItem('role', data.userData.role);
-            document.getElementById('message').innerHTML = '<p class="success">Login successful. Redirecting to profile in 4 seconds...</p>';
+            // document.getElementById('message').innerHTML = '<p class="success">Login successful. Redirecting to profile in 4 seconds...</p>';
+            alert(`Login successful`);
             setTimeout(() => {
-                window.location.href= '/profile';
-            }, 4000);
+                if (data.userData.role === 'customer') {
+                    window.location.href = '/home';
+                } else if (data.userData.role === 'owner') {
+                    window.location.href= '/dashboard-index';
+                }
+            }, 500);
         } else {
-            document.getElementById('message').innerHTML = `<p class="error">${data.message || 'Login failed'}</p>`;
+            alert(`Login error: ${data.message}`);
+            // document.getElementById('message').innerHTML = `<p class="error">${data.message || 'Login failed'}</p>`;
         }
     } catch (error) {
         console.log(error);

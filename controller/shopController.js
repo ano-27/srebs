@@ -9,6 +9,20 @@ exports.registerSeller = async (req, res) => {
         const { email, password, payment_from, payment_to, location, shop_name } = req?.body;
         const hashedPass = await bcryptjs.hash(password, 10);
         
+        const checkUser = await User.findOne(
+            {
+                where: {
+                    email: email
+                }
+            }
+        );
+        if (checkUser) {
+            return res.status(500).json({
+                success: false,
+                message: 'Email already in use' 
+            });  
+        }
+        
         // Register User
         const addUser = await User.create({
             email: email,
