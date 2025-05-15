@@ -22,7 +22,7 @@ document.getElementById('loginForm').addEventListener('submit', async(e) => {
             localStorage.setItem('user_id', data.userData.user_id);
             localStorage.setItem('role', data.userData.role);
             // document.getElementById('message').innerHTML = '<p class="success">Login successful. Redirecting to profile in 4 seconds...</p>';
-            alert(`Login successful`);
+            // alert(`Login successful`);
             setTimeout(() => {
                 if (data.userData.role === 'customer') {
                     window.location.href = '/home';

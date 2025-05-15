@@ -40,7 +40,7 @@ router.get('/product-list', authenticateToken, shopController.productList);
 
 // Product and Inventory: Check role = 'owner'
 router.post('/register-product', authenticateToken, reqValidator(productSchema.registerProduct), productController.registerProduct);
-router.put('/product/:id', authenticateToken, reqValidator(productSchema.editProduct), productController.editProduct);
+router.patch('/product/:id', authenticateToken, reqValidator(productSchema.editProduct), productController.editProduct);
 router.get('/product/:id', authenticateToken, productController.getProductDetails);
 router.patch('/edit-inventory/:id', authenticateToken, reqValidator(productSchema.editProductInventory), productController.editProductInventory);
 router.post('/product-batch', authenticateToken, reqValidator(productSchema.newBatchOfStock), productController.newBatchOfStock);

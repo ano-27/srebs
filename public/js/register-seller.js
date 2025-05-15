@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 const result = await response.json();
                 if (result.success) {
-                    alert('Registration successful');
+                    // alert('Registration successful');
                     setTimeout(() => {
                         window.location.href= '/login';
                     }, 500);

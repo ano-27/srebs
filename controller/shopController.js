@@ -88,7 +88,10 @@ exports.productList = async (req, res) => {
         },
         include: {
             model: Inventory
-        }
+        },
+        order: [
+            ['id', 'ASC']
+        ]
     });
     return res.status(200).json({
         success: true,

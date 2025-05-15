@@ -33,12 +33,17 @@
                 <input type="number" id="price" name="price" required>
             </div>
             <div class="form-group">
-                <label for="stock">Stock</label>
-                <input type="number" id="stock" name="stock" required>
+                <label for="product_type">Product Type</label>
+                <select id="product_type" name="product_type">
+                    <option value="singular">Singular</option>
+                    <option value="dozen">Dozen</option>
+                    <option value="loose_gram">Loose (gram)</option>
+                    <option value="loose_ml">Loose (ml)</option>
+                </select>
             </div>
             <div class="form-group">
-                <label for="expiry">Expiry Date</label>
-                <input type="date" id="expiry" name="expiry">
+                <label for="return_window">Return Window (days)</label>
+                <input type="number" id="return_window" name="return_window">
             </div>
             <button type="submit">Save Product</button>
             <button type="button" id="cancel-form">Cancel</button>

@@ -95,7 +95,7 @@ exports.editProduct = async (req, res) => {
             req?.body,
             {
                 where: {
-                    id: product_id
+                    id: req?.params?.id
                 }
             }
         );
