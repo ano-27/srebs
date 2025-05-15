@@ -92,7 +92,7 @@ function updateProductTable(products) {
     });
 }
 
-// Form
+// Form to handle Product Edit
 function hideProductForm() {
     document.getElementById('product-form-container').style.display = 'none';
 }
@@ -161,9 +161,40 @@ function editProduct(productId) {
 }
 
 // Event delegation for edit buttons
-document.querySelector('.products-table tbody').addEventListener('click', function(e) {
-    if (e.target.classList.contains('edit-product')) {  // Check if the clicked element has class - - > edit-product
+document.querySelector('.products-table tbody').addEventListener('click', function(e) {      // e - - > event object (holds info about the click)
+    if (e.target.classList.contains('edit-product')) {  // Check if the clicked element has class - - > edit-product , inside products-table 
         const productId = e.target.getAttribute('data-id');  
         editProduct(productId); // To show form with current values
+    }
+});
+
+function deleteProduct(productId) {
+    if (confirm('Proceed with deletion?')) {
+        fetch(`/api/product/${productId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                fetchProducts();
+            } else {
+                alert('Failed to delete product: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting product:', error);
+        });
+    }
+}
+
+// Event delgn for delete
+document.querySelector('.products-table tbody').addEventListener('click', function(e) {
+    if (e.target.classList.contains('delete-product')) {
+        const productId = e.target.getAttribute('data-id');
+        deleteProduct(productId);
     }
 });
