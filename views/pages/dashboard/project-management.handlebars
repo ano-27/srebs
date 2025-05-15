@@ -49,6 +49,24 @@
             <button type="button" id="cancel-form">Cancel</button>
         </form>
     </div>
+
+    <div id="new-batch-form-container" style="display: none;">
+        <h3>Add New Batch</h3>
+        <p>Product: <span id="batch_product_name"></span></p>
+        <form id="new-batch-form">
+            <input type="hidden" id="batch_product_id" name="product_id">
+            <div class="form-group">
+                <label for="batch_stock">Stock Quantity</label>
+                <input type="number" id="batch_stock" name="stock" required>
+            </div>
+            <div class="form-group">
+                <label for="batch_expiry">Expiry Date</label>
+                <input type="date" id="batch_expiry" name="expiry">
+            </div>
+            <button type="submit">Add Batch</button>
+            <button type="button" id="cancel-batch-form">Cancel</button>
+        </form>
+    </div>
 </div>
 
 <script src = "/js/product-list.js"></script>

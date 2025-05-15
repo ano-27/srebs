@@ -216,6 +216,15 @@ exports.newBatchOfStock = async (req, res) => {
     const dbTrans = await sequelize.transaction();
     try {
         const { Inventory } = models;
+        if (!req?.body?.shop_id) {
+            const shopDetails = await Inventory.findOne({
+                where: {
+                    product_id: req?.body?.product_id
+                },
+                attributes: ['shop_id']
+            }); 
+            req.body.shop_id = shopDetails?.shop_id;
+        }
         const addInventory = await Inventory.create(
             {
                 ...req?.body

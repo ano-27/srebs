@@ -2,9 +2,12 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchProducts();
     document.getElementById('product-form').addEventListener('submit', handleProductFormSubmit);
     document.getElementById('cancel-form').addEventListener('click', hideProductForm);
+
+    document.getElementById('new-batch-form').addEventListener('submit', handleNewBatchFormSubmit);
+    document.getElementById('cancel-batch-form').addEventListener('click', hideNewBatchForm);
 });
 
-// Listing
+// Listing = = = =
 function fetchProducts() {
     fetch('/api/product-list', {
         method: 'GET',
@@ -92,7 +95,7 @@ function updateProductTable(products) {
     });
 }
 
-// Form to handle Product Edit
+// Edit Product = = = =
 function hideProductForm() {
     document.getElementById('product-form-container').style.display = 'none';
 }
@@ -160,14 +163,7 @@ function editProduct(productId) {
     .catch(err => console.error('Error fetching product dtails: ', err));
 }
 
-// Event delegation for edit buttons
-document.querySelector('.products-table tbody').addEventListener('click', function(e) {      // e - - > event object (holds info about the click)
-    if (e.target.classList.contains('edit-product')) {  // Check if the clicked element has class - - > edit-product , inside products-table 
-        const productId = e.target.getAttribute('data-id');  
-        editProduct(productId); // To show form with current values
-    }
-});
-
+// Delete Product = = = =
 function deleteProduct(productId) {
     if (confirm('Proceed with deletion?')) {
         fetch(`/api/product/${productId}`, {
@@ -191,10 +187,70 @@ function deleteProduct(productId) {
     }
 }
 
-// Event delgn for delete
-document.querySelector('.products-table tbody').addEventListener('click', function(e) {
-    if (e.target.classList.contains('delete-product')) {
+// New Batch = = = =
+function hideNewBatchForm(){
+    document.getElementById('new-batch-form-container').style.display = 'none';
+}
+
+function showNewBatchForm(productId) {
+    fetch(`/api/product/${productId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('batch_product_id').value = data?.product?.id;
+            document.getElementById('batch_product_name').textContent = data?.product?.name;
+            document.getElementById('new-batch-form-container').style.display = 'block';
+        }
+    })
+    .catch(err => console.error('Error fetching product details: ', err));
+}
+
+function handleNewBatchFormSubmit(e) {
+    e.preventDefault();
+    const formData = {
+        product_id: parseInt(document.getElementById('batch_product_id').value),
+        stock: parseInt(document.getElementById('batch_stock').value),
+        expiry: document.getElementById('batch_expiry').value || undefined
+    };
+
+    fetch('/api/product-batch', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            hideNewBatchForm();
+            fetchProducts();
+        } else {
+            alert('Failed to add new batch' + data.message);
+        }
+    })
+    .catch(err => {
+        console.error('Error adding new batch:', err);
+    });
+}
+
+// Event delegations = = = =
+document.querySelector('.products-table tbody').addEventListener('click', function(e) {      // e - - > event object (holds info about the click)
+    if (e.target.classList.contains('edit-product')) {  // Check if the clicked element has class - - > edit-product , inside products-table 
+        const productId = e.target.getAttribute('data-id');  
+        editProduct(productId); // To show form with current values
+    } else if (e.target.classList.contains('delete-product')) {
         const productId = e.target.getAttribute('data-id');
         deleteProduct(productId);
+    } else if (e.target.classList.contains('new-batch')) {
+        const productId = e.target.getAttribute('data-id');
+        showNewBatchForm(productId);
     }
 });
