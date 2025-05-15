@@ -5,17 +5,26 @@ exports.registerProduct = async (req, res) => {
     const sequelize = getSequelize();   
     const dbTrans = await sequelize.transaction();
     if (req?.user?.role !== 'owner') {
+        await dbTrans.rollback();
         return res.status(500).json({
             success: false,
             message: 'Seller authentication failed. Access denied.' 
         });
     }
     console.log('\n req.user register product api', req.user);
+    console.log('\n req.body', req.body);
     try {
-        const { Product, Inventory } = models;
+        const { Product, Inventory, Shop } = models;
         let productData = { ...req?.body};
         delete productData.stock;
 
+        const shopDetails = await Shop.findOne({    // One owner, one shop
+            where: {
+                owner_user_id: req?.user?.id
+            }
+        });
+
+        productData.shop_id = shopDetails?.id;
         const addProduct = await Product.create(
             productData,
             { 
@@ -33,7 +42,7 @@ exports.registerProduct = async (req, res) => {
         // Add initial stock
         const addInventory = await Inventory.create(
             {
-                shop_id: req?.body?.shop_id,
+                shop_id: shopDetails?.id,
                 product_id: addProduct?.id,
                 expiry: req?.body?.expiry,
                 stock: req?.body?.stock

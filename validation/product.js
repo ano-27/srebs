@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
 const registerProduct = Joi.object({
-    shop_id: Joi.number().required(),
+    shop_id: Joi.number().optional(),
     product_type: Joi.string().valid('singular', 'dozen', 'loose_gram', 'loose_ml').required(),
     name: Joi.string().required(),
     price: Joi.number().precision(2).min(0).required(),

@@ -21,7 +21,7 @@
     </table>
     
     <div id="product-form-container" style="display: none;">
-        <h3>Add/Edit Product</h3>
+        <h3 id = "product-form-head"> Add/Edit Product</h3>
         <form id="product-form">
             <input type="hidden" id="product_id" name="id">
             <div class="form-group">
@@ -44,6 +44,14 @@
             <div class="form-group">
                 <label for="return_window">Return Window (days)</label>
                 <input type="number" id="return_window" name="return_window">
+            </div>
+            <div class="form-group">
+                <label for="register_expiry" id="register_expiry_label" style="display: none;">Expiry</label>
+                <input type="date" id="register_expiry" name="register_expiry">
+            </div>
+            <div class="form-group">
+                <label for="register_stock" id="register_stock_label" style="display: none;">Stock</label>
+                <input type="number" id="register_stock" name="register_stock">
             </div>
             <button type="submit">Save Product</button>
             <button type="button" id="cancel-form">Cancel</button>
