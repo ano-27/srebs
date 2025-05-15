@@ -76,8 +76,6 @@ exports.registerProduct = async (req, res) => {
 };
 
 exports.editProduct = async (req, res) => {
-    const sequelize = getSequelize();   
-    const dbTrans = await sequelize.transaction();
     if (req?.user?.role !== 'owner') {
         return res.status(500).json({
             success: false,
@@ -99,26 +97,19 @@ exports.editProduct = async (req, res) => {
                 where: {
                     id: product_id
                 }
-            },
-            { 
-                transaction: dbTrans
             }
         );
         if (!editProduct) {
-            await dbTrans.rollback();
             return res.status(500).json({
                 success: false,
                 message: 'Failed to edit Product' 
             });
         }
-
-        await dbTrans.commit();
         return res.status(200).json({
             success: true,
             message: `Product edited successfully.` 
         });
     } catch (e) {
-        await dbTrans.rollback();
         console.log(e);
         return res.status(500).json({
             success: false,
@@ -172,6 +163,40 @@ exports.editProductInventory = async (req, res) => {
     } catch (e) {
         await dbTrans.rollback();
         console.log(e);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
+    }
+}
+
+exports.getProductDetails = async (req, res) => {
+    if (!req?.user || !req?.params?.id) {
+        return res.status(500).json({
+            success: false,
+            message: 'Access denied.'
+        });  
+    }
+    try {
+        const { Product } = models;
+        const productDetails = await Product.findOne({
+            where: {
+                id: req?.params?.id
+            }
+        });
+        if (!productDetails) {
+            return res.status(500).json({
+                success: false,
+                message: 'Failed to fetch details'
+            });  
+        }
+        return res.status(200).json({
+            success: true,
+            message: 'Details fetched successfully',
+            product: productDetails
+        }); 
+    } catch (e) {
+        console.log('getProductDetails API error: ', err);
         return res.status(500).json({
             success: false,
             message: 'Internal server error'

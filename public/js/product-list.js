@@ -19,27 +19,9 @@ function fetchProducts() {
     .catch(err => console.error('Error fetching products:', err));
 };
 
-function updateProductTableV2(products) {
-    const tbody = document.querySelector('.products-table tbody');  // tbody elem of class = "products-table"
-    tbody.innerHTML = '';
-    products.forEach(product => {
-        const row = document.createElement('tr');   // Creating a <tr>
-        row.innerHTML = `
-            <td>${product?.id}</td>
-            <td>${product?.name}</td>
-            <td>${product?.price}</td>
-            <td>N/A</td>
-            <td>
-                <button class = "edit-product' data-id = "${product?.id}">Edit</button>
-                <button class = "delete-product' data-id = "${product?.id}">Delete</button>
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
-}
-
 function updateProductTable(products) {
-    const tbody = document.querySelector('.products-table tbody');
+    // Get element tbody of class products-table
+    const tbody = document.querySelector('.products-table tbody');  
     tbody.innerHTML = '';
 
     products.forEach(product => {
@@ -68,20 +50,20 @@ function updateProductTable(products) {
             const inventoryRow = document.createElement('tr');
             inventoryRow.className = `inventory-row inventory-for-${product.id}`;
             inventoryRow.style.display = 'none';
+            inventoryRow.style.border = 0;
             const expiryDate = inventory.expiry ? new Date(inventory.expiry).toLocaleDateString() : 'N/A';
             inventoryRow.innerHTML = `
                 <td colspan="2" style="padding-left: 30px;">
-                    <strong>Inventory ID:</strong> ${inventory.id}
                 </td>
                 <td>
-                    <strong>Stock:</strong> ${inventory.stock}
+                    
                 </td>
                 <td>
-                    <strong>Expiry:</strong> ${expiryDate}
+                    <strong>Stock:</strong> ${inventory.stock} <strong>Expiry:</strong> ${expiryDate}
                 </td>
                 <td>
-                    <button class="edit-inventory" data-id="${inventory.id}">Edit</button>
-                    <button class="delete-inventory" data-id="${inventory.id}">Delete</button>
+                    <button class="edit-inventory" data-id="${inventory.id}">Edit Stock</button>
+                    <button class="delete-inventory" data-id="${inventory.id}">Delete Stock</button>
                 </td>
             `;
             tbody.appendChild(inventoryRow);
@@ -90,6 +72,7 @@ function updateProductTable(products) {
 
     // Event listener for toggle buttons
     document.querySelectorAll('.toggle-inventory').forEach(button => {
+        // When button is clicked
         button.addEventListener('click', function() {
             const productId = this.getAttribute('data-id');
             const inventoryRows = document.querySelectorAll(`.inventory-for-${productId}`);
