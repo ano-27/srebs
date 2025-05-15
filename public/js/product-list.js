@@ -98,17 +98,25 @@ function updateProductTable(products) {
 // Edit Product = = = =
 function hideProductForm() {
     document.getElementById('product-form-container').style.display = 'none';
+
+    document.getElementById('register_stock').style.display = 'none';
+    document.getElementById('register_stock_label').style.display = 'none';
+    document.getElementById('register_expiry').style.display = 'none';
+    document.getElementById('register_expiry_label').style.display = 'none';
 }
 
 function handleProductFormSubmit(e) {
     e.preventDefault();
-    
+
     const productId = document.getElementById('product_id').value;
     const formData = {
         name: document.getElementById('name').value,
         price: parseFloat(document.getElementById('price').value),
         product_type: document.getElementById('product_type').value,
-        return_window: parseInt(document.getElementById('return_window').value) || undefined
+        return_window: parseInt(document.getElementById('return_window').value) || undefined,
+
+        stock: document.getElementById('register_stock').value || undefined,
+        expiry: document.getElementById('register_expiry').value || undefined
     };
 
     // Remove unfilled values
@@ -116,26 +124,47 @@ function handleProductFormSubmit(e) {
         if (formData[key] === undefined) delete formData[key];
     });
 
-    fetch(`/api/product/${productId}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(formData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            hideProductForm();
-            fetchProducts(); // Refresh the product list
-        } else {
-            alert('Failed to update product: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error updating product:', error);
-    });
+    // Add Product
+    if (!productId) {
+        fetch(`/api/register-product`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                hideProductForm();
+                fetchProducts();
+            } else {
+                alert('Failed to create product: ' + data.message);
+            }
+        })
+    } else {  // Edit Product
+        fetch(`/api/product/${productId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                hideProductForm();
+                fetchProducts(); // Refresh the product list
+            } else {
+                alert('Failed to update product: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error updating product:', error);
+        });
+    }
 }
 
 function editProduct(productId) {
@@ -158,6 +187,7 @@ function editProduct(productId) {
 
             // Show form
             document.getElementById('product-form-container').style.display = 'block';
+            document.getElementById('product-form-head').textContent = 'Edit Product';
         }
     })
     .catch(err => console.error('Error fetching product dtails: ', err));
@@ -241,6 +271,17 @@ function handleNewBatchFormSubmit(e) {
     });
 }
 
+// New Product (Uses same form of Edit Project and thus, function: handleProductFormSubmit) = = = =
+function addProduct() {
+    document.getElementById('register_stock').style.display = 'block';
+    document.getElementById('register_stock_label').style.display = 'block';
+    document.getElementById('register_expiry').style.display = 'block';
+    document.getElementById('register_expiry_label').style.display = 'block';
+
+    document.getElementById('product-form-container').style.display = 'block';
+    document.getElementById('product-form-head').textContent = 'Add Product';
+}
+
 // Event delegations = = = =
 document.querySelector('.products-table tbody').addEventListener('click', function(e) {      // e - - > event object (holds info about the click)
     if (e.target.classList.contains('edit-product')) {  // Check if the clicked element has class - - > edit-product , inside products-table 
@@ -253,4 +294,8 @@ document.querySelector('.products-table tbody').addEventListener('click', functi
         const productId = e.target.getAttribute('data-id');
         showNewBatchForm(productId);
     }
+});
+
+document.getElementById('add-product').addEventListener('click', function(e) {
+    addProduct();
 });
