@@ -67,3 +67,32 @@ exports.registerSeller = async (req, res) => {
         });
     }
 }
+
+// For now, one owner can have only one shop
+exports.productList = async (req, res) => {
+    if (!req?.user || req?.user?.role !== 'owner') {
+        return res.status(400).json({
+            success: false,
+            message: 'Access denied. Not a valid Shop Owner'
+        });
+    }
+    const { Shop, Product, Inventory } = models;
+    const shopDetails = await Shop.findOne({
+        where: {
+            owner_user_id: req?.user?.id 
+        }
+    });
+    const products = await Product.findAll({
+        where: {
+            shop_id: shopDetails?.id
+        },
+        include: {
+            model: Inventory
+        }
+    });
+    return res.status(200).json({
+        success: true,
+        message: 'Products fetched successfully',
+        products: products
+    });
+}

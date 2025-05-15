@@ -36,6 +36,7 @@ router.get('/qr-options/:product_id', qrController.qrOptions);
 
 // Shop
 router.post('/register-as-seller', reqValidator(shopSchema.registerSeller), shopController.registerSeller);  // Sign up user as 'owner' and populate Shop table
+router.get('/product-list', authenticateToken, shopController.productList);
 
 // Product and Inventory: Check role = 'owner'
 router.post('/register-product', authenticateToken, reqValidator(productSchema.registerProduct), productController.registerProduct);
@@ -43,7 +44,7 @@ router.patch('/edit-product/:id', authenticateToken, reqValidator(productSchema.
 router.patch('/edit-inventory/:id', authenticateToken, reqValidator(productSchema.editProductInventory), productController.editProductInventory);
 router.post('/product-batch', authenticateToken, reqValidator(productSchema.newBatchOfStock), productController.newBatchOfStock);
 router.delete('/delete-product/:id', authenticateToken, productController.deleteProduct);
-router.get('/product-list', authenticateToken, productController.productList);
+
 // Cart: Check role = 'customer' (Currently we are assumming, user should be signed in)
 router.post('/add-to-cart', authenticateToken, reqValidator(cartSchema.addToCart), cartController.addToCart);
 router.delete('/remove-from-cart/:id', authenticateToken, cartController.removeFromCart);
