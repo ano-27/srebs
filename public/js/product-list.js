@@ -1,7 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     fetchProducts();
+    document.getElementById('product-form').addEventListener('submit', handleProductFormSubmit);
+    document.getElementById('cancel-form').addEventListener('click', hideProductForm);
 });
 
+// Listing
 function fetchProducts() {
     fetch('/api/product-list', {
         method: 'GET',
@@ -88,3 +91,24 @@ function updateProductTable(products) {
         });
     });
 }
+
+// Form
+function hideProductForm() {
+    document.getElementById('product-form-container').style.display = 'none';
+}
+
+function handleProductFormSubmit(e) {
+
+}
+
+function editProduct(productId) {
+
+}
+
+// Event delegation for edit buttons
+document.querySelector('.products-table tbody').addEventListener('click', function(e) {
+    if (e.target.classList.contains('edit-product')) {
+        const productId = e.target.getAttribute('data-id');
+        editProduct(productId);
+    }
+});
