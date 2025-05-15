@@ -32,7 +32,7 @@ function updateProductTable(products) {
         const productRow = document.createElement('tr');
         productRow.className = 'product-row';
         productRow.innerHTML = `
-            <td>${product.id}</td
+            <td>${product.id}</td>
             <td>${product.name}</td>
             <td>${product.price}</td>
             <td>
@@ -98,17 +98,72 @@ function hideProductForm() {
 }
 
 function handleProductFormSubmit(e) {
+    e.preventDefault();
+    
+    const productId = document.getElementById('product_id').value;
+    const formData = {
+        name: document.getElementById('name').value,
+        price: parseFloat(document.getElementById('price').value),
+        product_type: document.getElementById('product_type').value,
+        return_window: parseInt(document.getElementById('return_window').value) || undefined
+    };
 
+    // Remove unfilled values
+    Object.keys(formData).forEach(key => {
+        if (formData[key] === undefined) delete formData[key];
+    });
+
+    fetch(`/api/product/${productId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            hideProductForm();
+            fetchProducts(); // Refresh the product list
+        } else {
+            alert('Failed to update product: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error updating product:', error);
+    });
 }
 
 function editProduct(productId) {
+    fetch(`/api/product/${productId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Populate form with product data
+            document.getElementById('product_id').value = data.product.id;
+            document.getElementById('name').value = data.product.name;
+            document.getElementById('price').value = data.product.price;
+            document.getElementById('product_type').value = data.product.product_type;
+            document.getElementById('return_window').value = data.product.return_window;
 
+            // Show form
+            document.getElementById('product-form-container').style.display = 'block';
+        }
+    })
+    .catch(err => console.error('Error fetching product dtails: ', err));
 }
 
 // Event delegation for edit buttons
 document.querySelector('.products-table tbody').addEventListener('click', function(e) {
-    if (e.target.classList.contains('edit-product')) {
-        const productId = e.target.getAttribute('data-id');
-        editProduct(productId);
+    if (e.target.classList.contains('edit-product')) {  // Check if the clicked element has class - - > edit-product
+        const productId = e.target.getAttribute('data-id');  
+        editProduct(productId); // To show form with current values
     }
 });
