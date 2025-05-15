@@ -44,7 +44,7 @@ router.patch('/product/:id', authenticateToken, reqValidator(productSchema.editP
 router.get('/product/:id', authenticateToken, productController.getProductDetails);
 router.patch('/edit-inventory/:id', authenticateToken, reqValidator(productSchema.editProductInventory), productController.editProductInventory);
 router.post('/product-batch', authenticateToken, reqValidator(productSchema.newBatchOfStock), productController.newBatchOfStock);
-router.delete('/delete-product/:id', authenticateToken, productController.deleteProduct);
+router.delete('/product/:id', authenticateToken, productController.deleteProduct);
 
 // Cart: Check role = 'customer' (Currently we are assumming, user should be signed in)
 router.post('/add-to-cart', authenticateToken, reqValidator(cartSchema.addToCart), cartController.addToCart);
