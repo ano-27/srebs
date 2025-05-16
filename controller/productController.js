@@ -11,8 +11,6 @@ exports.registerProduct = async (req, res) => {
             message: 'Seller authentication failed. Access denied.' 
         });
     }
-    console.log('\n req.user register product api', req.user);
-    console.log('\n req.body', req.body);
     try {
         const { Product, Inventory, Shop } = models;
         let productData = { ...req?.body};
@@ -92,14 +90,21 @@ exports.editProduct = async (req, res) => {
         });
     }
     try {
-        const { Product } = models;
-        const checkProduct = await Product.findByPk(req?.params?.id);
-        if (!checkProduct) {
-            return res.status(500).json({
+        const { Product, Shop } = models;
+        
+        const shopOfOwner = await Shop.findOne({
+            where: {
+                owner_user_id: req?.user?.id
+            }
+        });
+        const shopOfProduct = await Product.findByPk(req?.params?.id);
+        if (!shopOfOwner || !shopOfProduct || shopOfOwner?.id != shopOfProduct?.shop_id) {
+            return res.status(400).json({
                 success: false,
-                message: 'Product not found'
+                message: 'Seller authentication failed for updation'
             });
         }
+
         const editProduct = await Product.update(
             req?.body,
             {
@@ -128,50 +133,92 @@ exports.editProduct = async (req, res) => {
 }
 
 exports.editProductInventory = async (req, res) => {
-    if (req?.user?.role !== 'owner') {
-        return res.status(500).json({
-            success: false,
-            message: 'Seller authentication failed. Access denied.' 
-        });
-    }
-    const sequelize = getSequelize();   
-    const dbTrans = await sequelize.transaction();
     try {
-        const { Inventory } = models;
-        const checkInventory = await Inventory.findByPk(req?.params?.id);
-        if (!checkInventory) {
+        if (req?.user?.role !== 'owner') {
             return res.status(500).json({
                 success: false,
-                message: 'Inventory not found'
+                message: 'Seller authentication failed. Access denied.' 
             });
         }
+
+        const { Inventory, Shop } = models;
+
+        const shopOfOwner = await Shop.findOne({
+            where: {
+                owner_user_id: req?.user?.id
+            }
+        });
+        const shopOfInventory = await Inventory.findByPk(req?.params?.id);
+        if (!shopOfOwner || !shopOfInventory || shopOfOwner?.id != shopOfInventory?.shop_id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Seller authentication failed for updation'
+            });
+        }
+
         const editInventory = await Inventory.update(
             req?.body,
             {
                 where: {
                     id: req?.params?.id
                 }
-            },
-            { 
-                transaction: dbTrans
             }
         );
         if (!editInventory) {
-            await dbTrans.rollback();
             return res.status(500).json({
                 success: false,
                 message: 'Failed to edit Inventory' 
             });
         }
 
-        await dbTrans.commit();
         return res.status(200).json({
             success: true,
             message: `Inventory edited successfully.` 
         });
     } catch (e) {
-        await dbTrans.rollback();
         console.log(e);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
+    }
+}
+
+exports.deleteProductInventory = async (req, res) => {
+    const { Inventory, Shop } = models;
+    try {
+        if (req?.user?.role !== 'owner') {
+            return res.status(400).json({
+                success: false,
+                message: 'Seller authentication failed'
+            });
+        }
+
+        const shopOfOwner = await Shop.findOne({
+            where: {
+                owner_user_id: req?.user?.id
+            }
+        });
+        const shopOfInventory = await Inventory.findByPk(req?.params?.id);
+        if (!shopOfInventory || shopOfOwner?.id != shopOfInventory?.shop_id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Seller authentication failed for deletion'
+            });
+        }
+
+        await Inventory.destroy({
+            where: {
+                id: req?.params?.id
+            }
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: 'Deletion successful'
+        });  
+    } catch (err) {
+        console.log(err);
         return res.status(500).json({
             success: false,
             message: 'Internal server error'
@@ -221,10 +268,21 @@ exports.newBatchOfStock = async (req, res) => {
             message: 'Seller authentication failed. Access denied.' 
         });
     }
-    const sequelize = getSequelize();   
-    const dbTrans = await sequelize.transaction();
     try {
-        const { Inventory } = models;
+        const { Inventory, Shop, Product } = models;
+        const shopOfOwner = await Shop.findOne({
+            where: {
+                owner_user_id: req?.user?.id
+            }
+        });
+        const shopOfProduct = await Product.findByPk(req?.body?.product_id);
+        if (!shopOfOwner || !shopOfProduct || shopOfOwner?.id != shopOfProduct?.shop_id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Seller authentication failed for new batch'
+            });
+        }
+
         if (!req?.body?.shop_id) {
             const shopDetails = await Inventory.findOne({
                 where: {
@@ -234,21 +292,11 @@ exports.newBatchOfStock = async (req, res) => {
             }); 
             req.body.shop_id = shopDetails?.shop_id;
         }
-        const addInventory = await Inventory.create(
+        await Inventory.create(
             {
                 ...req?.body
-            },
-            {
-                transaction: dbTrans
-            });
-        if (!addInventory) {
-            await dbTrans.rollback();
-            return res.status(500).json({
-                success: false,
-                message: 'Failed to add inventory'
-            });
-        }
-        await dbTrans.commit();
+            }
+        );
         return res.status(200).json({
             success: true,
             message: `New batch of inventory added for the existing product` 
@@ -269,36 +317,27 @@ exports.deleteProduct = async (req, res) => {
             message: 'Seller authentication failed. Access denied.' 
         });
     }
-    const sequelize = getSequelize();
-    const dbTrans = await sequelize.transaction();
     try {
-        const { Product } = models;
-        const checkProduct = await Product.findByPk(req?.params?.id);
-        if (!checkProduct) {
-            await dbTrans.rollback();
-            return res.status(500).json({
+        const { Product, Shop } = models;
+        const shopOfOwner = await Shop.findOne({
+            where: {
+                owner_user_id: req?.user?.id
+            }
+        });
+        const shopOfProduct = await Product.findByPk(req?.params?.id);
+        if (!shopOfOwner || !shopOfProduct || shopOfOwner?.id != shopOfProduct?.shop_id) {
+            return res.status(400).json({
                 success: false,
-                message: 'Product not found'
-            });  
+                message: 'Seller authentication failed for deletion'
+            });
         }
-        const delProduct = await Product.destroy(
+        await Product.destroy(
             {
                 where: {
                     id: req?.params?.id
                 }
-            },
-            {
-                transaction: dbTrans
             }
         );
-        if (!delProduct) {
-            await dbTrans.rollback();
-            return res.status(500).json({
-                success: false,
-                message: 'Failed to delete product'
-            });  
-        }
-        await dbTrans.commit();
         return res.status(200).json({
             success: true,
             message: `Product successfully deleted` 
@@ -309,5 +348,39 @@ exports.deleteProduct = async (req, res) => {
             success: false,
             message: 'Internal server error'
         });  
+    }
+}
+
+exports.getInventoryDetails = async (req, res) => {
+    if (!req?.user || !req?.params?.id) {
+        return res.status(500).json({
+            success: false,
+            message: 'Access denied.'
+        });  
+    }
+    try {
+        const { Inventory } = models;
+        const inventoryDetails = await Inventory.findOne({
+            where: {
+                id: req?.params?.id
+            }
+        });
+        if (!inventoryDetails) {
+            return res.status(500).json({
+                success: false,
+                message: 'Failed to fetch details'
+            });  
+        }
+        return res.status(200).json({
+            success: true,
+            message: 'Details fetched successfully',
+            inventory: inventoryDetails
+        }); 
+    } catch (e) {
+        console.log('getInventoryDetails API error: ', err);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error'
+        });
     }
 }

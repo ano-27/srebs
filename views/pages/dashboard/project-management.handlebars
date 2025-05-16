@@ -20,6 +20,7 @@
         </tbody>
     </table>
     
+    {{!-- Form to Register New Product / Edit Existing Product --}}
     <div id="product-form-container" style="display: none;">
         <h3 id = "product-form-head"> Add/Edit Product</h3>
         <form id="product-form">
@@ -58,6 +59,7 @@
         </form>
     </div>
 
+    {{!-- Form to Register New Batch of Stock for a Product --}}
     <div id="new-batch-form-container" style="display: none;">
         <h3>Add New Batch</h3>
         <p>Product: <span id="batch_product_name"></span></p>
@@ -73,6 +75,24 @@
             </div>
             <button type="submit">Add Batch</button>
             <button type="button" id="cancel-batch-form">Cancel</button>
+        </form>
+    </div>
+
+    {{!-- Form to Edit Inventory --}}
+    <div id="edit-inventory-form-container" style="display: none;">
+        <h3>Edit Inventory</h3>
+        <form id="edit-inventory-form">
+            <input type="hidden" id="edit_inventory_id" name="inventory_id">
+            <div class="form-group">
+                <label for="edit_inventory_stock">Stock Quantity</label>
+                <input type="number" id="edit_inventory_stock" name="stock" required>
+            </div>
+            <div class="form-group">
+                <label for="edit_inventory_expiry">Expiry Date</label>
+                <input type="date" id="edit_inventory_expiry" name="expiry">
+            </div>
+            <button type="submit">Update Inventory</button>
+            <button type="button" id="cancel-edit-inventory">Cancel</button>
         </form>
     </div>
 </div>

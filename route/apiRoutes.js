@@ -43,6 +43,8 @@ router.post('/register-product', authenticateToken, reqValidator(productSchema.r
 router.patch('/product/:id', authenticateToken, reqValidator(productSchema.editProduct), productController.editProduct);
 router.get('/product/:id', authenticateToken, productController.getProductDetails);
 router.patch('/edit-inventory/:id', authenticateToken, reqValidator(productSchema.editProductInventory), productController.editProductInventory);
+router.delete('/delete-inventory/:id', authenticateToken, productController.deleteProductInventory);
+router.get('/inventory/:id', authenticateToken, productController.getInventoryDetails);
 router.post('/product-batch', authenticateToken, reqValidator(productSchema.newBatchOfStock), productController.newBatchOfStock);
 router.delete('/product/:id', authenticateToken, productController.deleteProduct);
 

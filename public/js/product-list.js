@@ -1,3 +1,4 @@
+// Event Delegations = = = =
 document.addEventListener('DOMContentLoaded', function() {
     fetchProducts();
     document.getElementById('product-form').addEventListener('submit', handleProductFormSubmit);
@@ -5,6 +6,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('new-batch-form').addEventListener('submit', handleNewBatchFormSubmit);
     document.getElementById('cancel-batch-form').addEventListener('click', hideNewBatchForm);
+    
+    /*
+        Direct event listeners only work on elements that exist at the time of attachment.
+        So, we applied el on static elem ie. a Parent, this is known as Delegated Event Listening
+    */
+    const tbody = document.querySelector('.products-table tbody');
+    tbody.addEventListener('click', function(e) {
+        if (e.target.classList.contains('delete-inventory')) {
+            const inventoryId = e.target.getAttribute('data-id');
+            console.log('Delete Inventory Clicked: ', inventoryId);
+            deleteInventory(inventoryId);
+        } else if (e.target.classList.contains('edit-inventory')) {
+            const inventoryId = e.target.getAttribute('data-id');
+            console.log('Edit Inventory Clicked: ', inventoryId);
+            openEditInventoryForm(inventoryId);
+        }
+    });
+
+    document.getElementById('edit-inventory-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        updateInventory();
+    });
+
+    document.getElementById('cancel-edit-inventory').addEventListener('click', function() {
+        document.getElementById('edit-inventory-form-container').style.display = 'none';
+    });
 });
 
 // Listing = = = =
@@ -54,7 +81,7 @@ function updateProductTable(products) {
         // Inventory rows
         product.Inventories.forEach(inventory => {
             const inventoryRow = document.createElement('tr');
-            inventoryRow.className = `inventory-row inventory-for-${product.id}`;
+            inventoryRow.className = `inventory-row inventory-for-${product.id}`;   // Elem belongs to 2 classes
             inventoryRow.style.display = 'none';
             inventoryRow.style.border = 0;
             const expiryDate = inventory.expiry ? new Date(inventory.expiry).toLocaleDateString() : 'N/A';
@@ -282,7 +309,91 @@ function addProduct() {
     document.getElementById('product-form-head').textContent = 'Add Product';
 }
 
-// Event delegations = = = =
+// Edit Inventory = = = =
+async function updateInventory() {
+    const inventoryId = document.getElementById('edit_inventory_id').value;
+    const stock = document.getElementById('edit_inventory_stock').value;
+    const expiry = document.getElementById('edit_inventory_expiry').value;
+    try {
+        const response = await fetch(`/api/edit-inventory/${inventoryId}`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                stock: parseInt(stock),
+                expiry: expiry || null
+            })
+        });
+        const data = await response.json();
+        if (data.success) {
+            document.getElementById('edit-inventory-form-container').style.display = 'none';
+            fetchProducts();
+        } else {
+            alert(data.message || 'Failed to update inventory');
+        }
+    } catch (err) {
+        console.error('Error updating inventory:', error);
+        alert('An error occurred while updating inventory');
+    }
+}
+
+async function openEditInventoryForm(inventoryId) {
+    try {
+        // To populate the form with initial values
+        const response = await fetch(`/api/inventory/${inventoryId}`, {
+            headers: {
+                // 'Authorization': `Bearer ${localStorage.getItem('token')}`,  // We are currently not using stuff from localStorage. Everything is handled on the basis of cookie.
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json(); // Even if the API returns JSON, fetch returns a Response object, which is required to be converted back to JSON
+        if (data.success) {
+            const inventory = data.inventory;
+            document.getElementById('edit_inventory_id').value = inventoryId,
+            document.getElementById('edit_inventory_stock').value = inventory.stock;
+            if (inventory.expiry) {
+                document.getElementById('edit_inventory_expiry').value = inventory.expiry.split('T')[0]; // Get just the date part
+            } else {
+                document.getElementById('edit_inventory_expiry').value = '';
+            }
+
+            // Show the form
+            document.getElementById('edit-inventory-form-container').style.display = 'block';
+        } else {
+            alert('Failed to fetch inventory details');
+        }
+    } catch (err) {
+        console.error('Error fetching inventory details:', error);
+        alert('An error occurred while fetching inventory details');  
+    }
+}
+
+// Delete Inventory = = = =
+function deleteInventory(inventoryId) {
+    if (confirm('Proceed with deletion?')) {
+        fetch(`/api/delete-inventory/${inventoryId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                fetchProducts();
+            } else {
+                alert('Failed to delete inventory: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting inventory:', error);
+        });
+    }
+}
+
+// Some More Event delegations = = = =
 document.querySelector('.products-table tbody').addEventListener('click', function(e) {      // e - - > event object (holds info about the click)
     if (e.target.classList.contains('edit-product')) {  // Check if the clicked element has class - - > edit-product , inside products-table 
         const productId = e.target.getAttribute('data-id');  
