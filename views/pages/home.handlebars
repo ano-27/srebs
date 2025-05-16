@@ -7,12 +7,22 @@
         <a href="#" id = "logoutElem" class="logout">Log Out</a>
     </div><br><br>
 
-    <div class="main-options">
-        <button id="scan-qr-btn" class="main-btn">Scan QR</button>
-        {{!-- <button id="view-cart-btn" class="main-btn">View Cart</button> --}}
+    {{!-- Scan QR  --}}
+    <div class="main-wrapper">
+        <div class="main-content">
+            <div class="qr-icon"></div>
+            <button class="scan-title" id="scanQrButton">Scan QR</button>
+        </div>
+
+        <!-- Hidden elements for QR scanning that will appear when scan is clicked -->
+        <div id="scannerContainer" style="display: none;">
+            <video id="scanner" width="300" height="300"></video>
+            <button id="cancelScan">Cancel</button>
+            <div id="scanResult"></div>
+        </div>
     </div>
     
-    <!-- QR Scanner Container -->
+    {{!-- <!-- QR Scanner Container -->
     <div id="scanner-container" style="display: none;">
         <h3>Scan Product QR Code</h3>
         <div id="reader"></div>
@@ -40,7 +50,7 @@
                 <button id="cancel-product-view" class="cancel-btn">Cancel</button>
             </div>
         </div>
-    </div>
+    </div> --}}
     
     <!-- Cart Container -->
     <div id="cart-container" style="display: none;">
@@ -91,5 +101,5 @@
     </div>
 </div>
 
-<script src="/js/html5-qrcode.min.js"></script>
+{{!-- <script src="/js/html5-qrcode.min.js"></script> --}}
 <script src="/js/home.js"></script>
