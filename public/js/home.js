@@ -63,7 +63,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         stopCamera();
 
                         const productId = data.data.product_id;
-                        window.location.href = `api/qr-options/${productId}`;  // Redirecting to new route
+                        processProduct(productId);
+                        // window.location.href = `api/qr-options/${productId}`;  // Redirecting to new route
 
                         scannerContainer.style.display = 'none';
                     }
@@ -88,6 +89,67 @@ document.addEventListener('DOMContentLoaded', function() {
             stream = null;
         }
     }
+
+    // Process Scanned Product
+    async function processProduct(productId) {
+        console.log('productId', productId);
+        const response = await fetch(`api/product/${productId}`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (response?.ok) {
+            // Show form
+            document.getElementById('product-name').textContent = data.product.name;
+            document.getElementById('product-price').textContent = data.product.price;
+            document.getElementById('scanned-product-container').style.display = 'block';
+        }
+        
+        document.getElementById('add-to-cart-btn').addEventListener('click', async () => {
+            const response2 = await fetch(`api/add-to-cart`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    quantity: document.getElementById('product-quantity').value
+                })
+            });
+            const data2 = await response2.json();
+            if (response2.ok) {
+                alert('Product added to cart');
+                // window.location.href = ''
+                // document.getElementById('scanned-product-container').style.display = 'none';
+            }
+        });
+
+        document.getElementById('direct-checkout-btn').addEventListener('click', async () => {
+            const response3 = await fetch(`api/createOrder`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    productId: productId,
+                    amount: data.product.price
+                })
+            });
+            const data3 = await response3.json();
+            console.log('\n = = data3', data3);
+            if (response3.ok) {
+                console.log('n = = ok3');
+                window.location.href = `api/checkout?order_id=${data3.order.id}`;  // A GET Api will get trigerred
+            }
+        });
+    }
+
+    // Close scanned product form
+    document.getElementById('cancel-product-view').addEventListener('click', async () => {
+        document.getElementById('scanned-product-container').style.display = 'none';
+    });
 
     // Handle Logout 
     document.getElementById('logoutElem').addEventListener('click', async () => {
