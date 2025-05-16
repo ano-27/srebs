@@ -97,7 +97,7 @@ exports.qrOptions = async (req, res) => {
     const { product_id } = req.params;
     const productDetails = await Product.findOne({ where: { id: product_id } });
     console.log('\nproductDetails', productDetails);
-    res.render('qrOptions', {
+    res.render('pages/qrOptions', {
         product: { 
             id: productDetails?.id,
             name: productDetails?.name,

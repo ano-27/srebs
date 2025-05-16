@@ -25,7 +25,7 @@ router.post('/refreshtoken', userController.refreshController);
 router.post('/logout', userController.logoutController);
 router.post('/profile', authenticateToken, userController.profileController);
 
-router.post('/createOrder', paymentController.createOrder);
+router.post('/createOrder', authenticateToken, paymentController.createOrder);
 router.get('/checkout', paymentController.checkoutPage);
 router.post('/verifyPayment', paymentController.verifyPayment);
 

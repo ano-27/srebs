@@ -32,6 +32,25 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('cancel-edit-inventory').addEventListener('click', function() {
         document.getElementById('edit-inventory-form-container').style.display = 'none';
     });
+
+    document.getElementById('logoutElem').addEventListener('click', async () => {
+        if (confirm('Proceed with Logout?')) {
+            try {
+                await fetch('/api/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                window.location.href = '/login';
+            } catch (error) {
+                console.log(error);
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('accessToken');
+                window.location.href = '/login';
+            }
+        }
+    }); 
 });
 
 // Listing = = = =

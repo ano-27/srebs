@@ -1,0 +1,62 @@
+
+    {{!-- <h3>  Order Summary</h3><br><br>
+    <p>  Order ID: <strong>{{order_id}}</strong></p>
+    <p><strong> </strong></p>
+    <p>  Amount: <strong>₹{{amount}}</strong></p> --}}
+    
+    {{!-- <p style="margin-bottom: 10px;">Order ID: <strong>{{order_id}}</strong></p>
+    <p style="margin-bottom: 10px;">Amount: <strong>₹{{amount}}</strong></p> --}}
+    <div class="profile-container">
+        <h2>Order Summary</h2>
+        <div id="profileData">Order ID: {{order_id}}</div>
+        <div id="profileData">Amount: ₹{{amount}}</div>
+        <button id="pay-button">Pay Now</button>
+    </div>
+    
+    {{!--
+    <pre>
+    Order ID: {{order_id}}
+    Amount: ₹{{amount}}
+
+                    <button id="pay-button">Pay Now</button>
+    </pre>
+    --}}
+
+
+    
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        document.getElementById('pay-button').onclick = function() {
+            var options = {
+                "key": "{{key}}",
+                "amount": "{{amount}}", 
+                "currency": "INR",
+                "name": "Your Company",
+                "description": "Course Purchase",
+                "order_id": "{{order_id}}",
+                "handler": function (response) {
+                    document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+                    document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+                    document.getElementById('razorpay_signature').value = response.razorpay_signature;
+                    
+                    document.getElementById('user_id').value = localStorage.getItem('user_id');
+                    document.getElementById('role').value = localStorage.getItem('role');
+                    document.getElementById('amount').value = "{{amount}}";
+                    
+                    document.getElementById('razorpay-form').submit();
+                }
+            };
+            var rzp = new Razorpay(options);
+            rzp.open();
+        };
+    </script>
+    
+    <form id="razorpay-form" action="/api/verifyPayment" method="POST" style="display: none">
+        <input type="hidden" name="order_id" id="razorpay_order_id">
+        <input type="hidden" name="payment_id" id="razorpay_payment_id">
+        <input type="hidden" name="signature" id="razorpay_signature">
+    
+        <input type="hidden" name="amount" id="amount">
+        <input type="hidden" name="user_id" id="user_id">
+        <input type="hidden" name="role" id="role">
+    </form>

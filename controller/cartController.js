@@ -4,6 +4,7 @@ const { models, getSequelize } = require ('../models/index.js');
 const razorpayInstance = createRazorPayInstance(); 
 
 exports.addToCart = async (req, res) => {
+    console.log('\n = = = ', req.body);
     if (!req?.user || req?.user?.role !== 'customer') {
         return res.status(401).json({
             success: false,

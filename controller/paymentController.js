@@ -6,16 +6,24 @@ require('dotenv').config();
 const razorpayInstance = createRazorPayInstance();  // Instance of Razor Pay
 
 exports.createOrder = async(req, res) => {
-    // In Production - - > Dont accept 'amount' from client - - > As, it can be changed from Inspect Element - - > Later we will fetch amount from Database using id of the entity
-    const { paymentId, amount } = req.body;
+    if (!req.user) {
+        return res.status(500).json({
+            success: false,
+            message: 'Access denied for creating order'
+        });
+    }
+    const { productId, amount } = req.body;
     const options = {
         amount: amount * 100,   // An amount of 100 here in razor pay denotes - - > 1.00
         currency: "INR",
-        receipt: 'receipt_order_1',
+        receipt: `receipt-${productId}__${req?.user?.id}`,
     }
     try {
         const order = await razorpayInstance.orders.create(options);
-        return res.status(200).json(order);
+        return res.status(200).json({
+            success: true,
+            order: order
+        });
     } catch (err) {
         console.log(err);
         return res.status(500).json({
@@ -30,7 +38,7 @@ exports.checkoutPage = async(req, res) => {
         let order_id = req.query.order_id;
         const order = await razorpayInstance.orders.fetch(order_id);
         const amount = order.amount / 100; 
-        res.render('checkout.handlebars', {
+        res.render('pages/checkout.handlebars', {
             layout: 'main.handlebars',
             order_id: order_id,
             amount: amount,
@@ -72,7 +80,7 @@ exports.verifyPayment = async(req, res) => {
                 console.log('Failed to store payment record in database');
                 res.status(500).send('Failed to store payment record in database');
             }
-            res.render('pay-verify.handlebars', {
+            res.render('pages/pay-verify.handlebars', {
                 message: 'Payment verified',
                 layout: 'main.handlebars',
                 order_id: order_id,
@@ -80,7 +88,7 @@ exports.verifyPayment = async(req, res) => {
                 status: 'success'
             });
         } else {
-            res.render('pay-verify.handlebars', {
+            res.render('pages/pay-verify.handlebars', {
                 message: 'Payment not verified',
                 layout: 'main.handlebars',
                 order_id: order_id,
