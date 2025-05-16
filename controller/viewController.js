@@ -30,7 +30,16 @@ exports.dashboardProjectController = async (req, res) => {
     res.render('pages/dashboard/project-management');
 }
 
+exports.dashboardProjectControllerReturn = async (req, res) => {
+    res.render('pages/dashboard/return');
+}
+
 // Others
 exports.contactController = async (req, res) => {
     res.render('pages/contact');
+}
+
+// Customer
+exports.cartController = async (req, res) => {
+    res.render('pages/cart-management')
 }

@@ -13,7 +13,10 @@ router.get('/home', authenticateToken, viewController.homeController);
 router.get('/register-seller', viewController.registerSellerController);
 router.get('/dashboard-index', authenticateToken, viewController.dashboardIndexController);
 router.get('/dashboard/project', authenticateToken, viewController.dashboardProjectController);
-router.get('/dashboard/return', authenticateToken, viewController.dashboardProjectController);
+router.get('/dashboard/return', authenticateToken, viewController.dashboardProjectControllerReturn);
+
+// Customer
+router.get('/cart', authenticateToken, viewController.cartController);
 
 // Others
 router.get('/contact', viewController.contactController);
