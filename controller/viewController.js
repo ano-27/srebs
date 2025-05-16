@@ -43,3 +43,7 @@ exports.contactController = async (req, res) => {
 exports.cartController = async (req, res) => {
     res.render('pages/cart-management')
 }
+
+exports.historyController = async (req, res) => {
+    res.render('pages/history')
+}

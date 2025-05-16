@@ -17,6 +17,7 @@ router.get('/dashboard/return', authenticateToken, viewController.dashboardProje
 
 // Customer
 router.get('/cart', authenticateToken, viewController.cartController);
+router.get('/history', authenticateToken, viewController.historyController);
 
 // Others
 router.get('/contact', viewController.contactController);
