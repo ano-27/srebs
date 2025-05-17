@@ -53,5 +53,6 @@ router.post('/add-to-cart', authenticateToken, reqValidator(cartSchema.addToCart
 router.delete('/remove-from-cart/:id', authenticateToken, cartController.removeFromCart);
 router.delete('/empty-cart', authenticateToken, cartController.emptyCart);
 router.post('/cart-checkout', authenticateToken, cartController.checkoutFromCart);
+router.get('/cart-item-list', authenticateToken, cartController.cartItemList);
 
 module.exports = router;
