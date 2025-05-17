@@ -120,12 +120,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const data2 = await response2.json();
             if (response2.ok) {
                 alert('Product added to cart');
-                // window.location.href = ''
-                // document.getElementById('scanned-product-container').style.display = 'none';
             }
         });
 
         document.getElementById('direct-checkout-btn').addEventListener('click', async () => {
+            const quantity_filled = document.getElementById('product-quantity').value; 
             const response3 = await fetch(`api/createOrder`, {
                 method: 'POST',
                 credentials: 'include',
@@ -134,13 +133,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify({
                     productId: productId,
-                    amount: data.product.price
+                    amount: parseFloat(data.product.price) * quantity_filled
                 })
             });
             const data3 = await response3.json();
-            console.log('\n = = data3', data3);
             if (response3.ok) {
-                console.log('n = = ok3');
                 window.location.href = `api/checkout?order_id=${data3.order.id}`;  // A GET Api will get trigerred
             }
         });
@@ -152,7 +149,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Handle Logout 
-    document.getElementById('logoutElem').addEventListener('click', async () => {
+    document.getElementById('logoutElem').addEventListener('click', async (event) => {
+        event.preventDefault();
         if (confirm('Proceed with Logout?')) {
             try {
                 await fetch('/api/logout', {
@@ -165,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } catch (error) {
                 console.log(error);
                 localStorage.removeItem('accessToken');
-                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
                 window.location.href = '/login';
             }
         }
