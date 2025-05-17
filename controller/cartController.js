@@ -160,3 +160,23 @@ exports.checkoutFromCart = async (req, res) => {
         });
     }
 }
+
+exports.cartItemList = async (req, res) => {
+    const { Cart, Product } = models;
+    const items = await Cart.findAll({
+        where: {
+            user_id: req?.user?.id
+        },
+        include: {
+            model: Product
+        },
+        order: [
+            ['id', 'ASC']
+        ]
+    });
+    return res.status(200).json({
+        success: true,
+        message: 'Cart items fetched successfully',
+        items: items
+    });
+}
