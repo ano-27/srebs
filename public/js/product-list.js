@@ -334,7 +334,7 @@ async function updateInventory() {
             alert(data.message || 'Failed to update inventory');
         }
     } catch (err) {
-        console.error('Error updating inventory:', error);
+        console.log('Error updating inventory:', err);
         alert('An error occurred while updating inventory');
     }
 }
@@ -365,7 +365,7 @@ async function openEditInventoryForm(inventoryId) {
             alert('Failed to fetch inventory details');
         }
     } catch (err) {
-        console.error('Error fetching inventory details:', error);
+        console.log('Error fetching inventory details:', err);
         alert('An error occurred while fetching inventory details');  
     }
 }
