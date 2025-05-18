@@ -5,6 +5,11 @@ const addToCart = Joi.object({
     quantity: Joi.number().required()
 });
 
+const editCartItem = Joi.object({
+    quantity: Joi.number().integer().min(1).required()
+});
+
 module.exports = {
-    addToCart
+    addToCart,
+    editCartItem
 }

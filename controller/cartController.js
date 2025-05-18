@@ -180,3 +180,77 @@ exports.cartItemList = async (req, res) => {
         items: items
     });
 }
+
+exports.getCartItemDetails = async (req, res) => {
+    if (!req?.user?.id || !req?.params?.id) {
+        return res.status(400).json({
+            success: false,
+            message: 'Access denied'
+        });
+    }
+    try {
+        const { Cart, Product } = models;
+        const item = await Cart.findOne({
+            where: {
+                id: req?.params?.id
+            },
+            include: {
+                model: Product
+            }
+        });
+        if (!item || item?.user_id !== req?.user?.id) { // Make sure only customer linked to the cart-item can see the details
+            return res.status(500).json({
+                success: false,
+                message: 'Failed to fetch Cart Item details'
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            message: 'Cart Item details fetched successfully',
+            item: item
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal Server Error'
+        });
+    }
+}
+
+exports.editCartItem = async (req, res) => {
+    if (!req?.user?.id || !req?.params?.id) {
+        return res.status(400).json({
+            success: false,
+            message: 'Access denied'
+        });
+    }
+    try {
+        const { Cart } = models;
+        const checkExists = await Cart.findByPk(req?.params?.id);
+        if (!checkExists || checkExists.user_id !== req?.user?.id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Product doesnt exist or user validation error'
+            });
+        }
+        await Cart.update(
+            { quantity: req?.body?.quantity},
+            {
+                where: {
+                    id: req?.params.id
+                }
+            }
+        );
+        return res.status(200).json({
+            success: true,
+            message: 'Cart Item edited successfully'
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal Server Error'
+        });  
+    }
+}
