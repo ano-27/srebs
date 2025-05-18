@@ -11,7 +11,10 @@ exports.registerController = async(req, res) => {
         const { email, password } = req.body;
         const existUser = await User.findOne({ where: { email: email } });  // Check if user exists with same email
         if (existUser) {
-            return res.status(409).json("Email in use. Kindly use another email.");
+            return res.status(409).json({
+                success: false,
+                message: 'Email in use. Kindly use another email.'
+            });
         } else {
             const hashedPass = await bcryptjs.hash(password, 10);
             const createUser = await User.create({
@@ -19,7 +22,8 @@ exports.registerController = async(req, res) => {
                 password: hashedPass   // Overwrites value of 'password' key of object from 'req.body.password' to 'hashedPass' // An object  has unique keys
             });
             return res.status(201).json({
-                message: "Registration successful.",
+                success: true,
+                message: "Registration successful. Kindly login.",
                 userData: {
                     id: createUser.id,
                     email: createUser.email
@@ -28,7 +32,10 @@ exports.registerController = async(req, res) => {
         }
     } catch (error) {
         console.log(error);
-        return res.status(502).json('INTERNAL SERVER ERROR');
+        return res.status(502).json({
+            success: false,
+            message: 'INTERNAL SERVER ERROR'
+        });
     }
 }
 
