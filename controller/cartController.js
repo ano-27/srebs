@@ -110,9 +110,8 @@ exports.checkoutFromCart = async (req, res) => {
     }
 
     try {
-
         const { Cart, Product } = models;
-
+        
         const items = await Cart.findAll({
             where: {
                 user_id: req?.user?.id

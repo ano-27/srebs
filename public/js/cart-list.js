@@ -121,6 +121,7 @@ async function openItemEditForm(cartItemId) {
         alert('An error occurred while fetching Cart Item details');
     }
 }
+
 async function updateItemList() {
     const cartItemId = document.getElementById('edit_cart_item_id').value;
     const quantity = document.getElementById('edit_cart_item_quantity').value;
@@ -148,11 +149,36 @@ async function updateItemList() {
     }
 }
 
-// Clear/Checkout = = = =
+// Clear Cart = = = =
 async function clearCart() {
-
+    if (confirm('Remove all items from Cart?')) {
+        const response = await fetch(`/api/empty-cart`, {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json()
+        if (data.success) {
+            fetchCartItems();
+        } else {
+            alert(`Failed to empty cart: ${data.message}`);
+        }
+    }
 }
 
+// Checkout From Cart = = = =
 async function checkoutCart() {
-
+    const response = await fetch(`/api/cart-checkout`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-type': 'application/json'
+        }
+    });
+    const data = await response.json();
+    if (response.ok) {
+        window.location.href = `api/checkout?order_id=${data.id}`;
+    }
 }
