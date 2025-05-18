@@ -56,5 +56,6 @@ router.post('/cart-checkout', authenticateToken, cartController.checkoutFromCart
 router.get('/cart-item-list', authenticateToken, cartController.cartItemList);
 router.get('/cart-item/:id', authenticateToken, cartController.getCartItemDetails);
 router.patch('/cart-item/:id', authenticateToken, reqValidator(cartSchema.editCartItem), cartController.editCartItem);
+router.get('/transaction-history/:id', authenticateToken, cartController.getTransactionHistory);
 
 module.exports = router;

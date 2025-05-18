@@ -1,8 +1,9 @@
 Remaining functionalities :
 
-1. cart - view all item list with edit, delete option
-2. empty cart option
-3. checkout with all products in cart
+1. transaction history with product and quantity details 
+2. bill dwld feature for indiv transactions
+3. show details of product on product success page as well
+
 
 Views structure:
 

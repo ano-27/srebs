@@ -111,7 +111,7 @@ exports.checkoutFromCart = async (req, res) => {
 
     try {
         const { Cart, Product } = models;
-        
+
         const items = await Cart.findAll({
             where: {
                 user_id: req?.user?.id
@@ -252,4 +252,8 @@ exports.editCartItem = async (req, res) => {
             message: 'Internal Server Error'
         });  
     }
+}
+
+exports.getTransactionHistory = async (req, res) => {
+    const { Payment } = models;
 }

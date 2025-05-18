@@ -1,11 +1,3 @@
-
-    {{!-- <h3>  Order Summary</h3><br><br>
-    <p>  Order ID: <strong>{{order_id}}</strong></p>
-    <p><strong> </strong></p>
-    <p>  Amount: <strong>₹{{amount}}</strong></p> --}}
-    
-    {{!-- <p style="margin-bottom: 10px;">Order ID: <strong>{{order_id}}</strong></p>
-    <p style="margin-bottom: 10px;">Amount: <strong>₹{{amount}}</strong></p> --}}
     <br>
     <div class="tabs">
         <a href="/home" class="tab active">Return to Home</a>
@@ -16,18 +8,7 @@
         <div id="profileData">Amount: ₹{{amount}}</div>
         <button id="pay-button">Pay Now</button>
     </div>
-    
-    {{!--
-    <pre>
-    Order ID: {{order_id}}
-    Amount: ₹{{amount}}
-
-                    <button id="pay-button">Pay Now</button>
-    </pre>
-    --}}
-
-
-    
+        
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
         document.getElementById('pay-button').onclick = function() {
