@@ -11,6 +11,7 @@ document.getElementById('loginForm').addEventListener('submit', async(e) => {
             headers: {
                 'Content-Type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({ email, password })
         });
         const data = await response.json();
@@ -29,7 +30,7 @@ document.getElementById('loginForm').addEventListener('submit', async(e) => {
                 } else if (data.userData.role === 'owner') {
                     window.location.href= '/dashboard-index';
                 }
-            }, 500);
+            }, 250);
         } else {
             alert(`Login error: ${data.message}`);
             // document.getElementById('message').innerHTML = `<p class="error">${data.message || 'Login failed'}</p>`;

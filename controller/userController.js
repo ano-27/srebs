@@ -69,8 +69,8 @@ exports.loginController = async(req, res) => {
         const refreshToken = generateRefreshToken(checkUser);
         await checkUser.update({refreshToken: refreshToken});   // We can update that row like this as well. Updates refreshToken for the record when we login
 
-        res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: true});  // Store refreshToken in client's cookie. httpOnly: true - - > Client can't use JS to get that refreshToken from cookie and secure: true - - > allow only HTTPS connections
-        res.cookie("accessToken", accessToken, {httpOnly: true, secure: true});
+        res.cookie("refreshToken", refreshToken, {httpOnly: true, secure: false});  // Store refreshToken in client's cookie. httpOnly: true - - > Client can't use JS to get that refreshToken from cookie and secure: true - - > allow only HTTPS connections
+        res.cookie("accessToken", accessToken, {httpOnly: true, secure: false});
         // res.clearCookie("refreshToken"); // To clear the cookie - - > We pass the name in string and the val of the object gets deleted
         
         return res.status(200).json({
@@ -106,7 +106,7 @@ exports.refreshController = async(req, res) => {
                 return res.status(403).json('Error in verifying Refresh Token');
             }
             const accessToken = generateAccessToken(user.dataValues);
-            res.cookie('accessToken', accessToken, {httpOnly: true, secure: true});
+            res.cookie('accessToken', accessToken, {httpOnly: true, secure: false});
             return res.status(200).json({
                 accessToken: accessToken
             });

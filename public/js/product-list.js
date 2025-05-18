@@ -324,7 +324,8 @@ async function updateInventory() {
             body: JSON.stringify({
                 stock: parseInt(stock),
                 expiry: expiry || null
-            })
+            }),
+            credentials: 'include',
         });
         const data = await response.json();
         if (data.success) {
@@ -346,7 +347,8 @@ async function openEditInventoryForm(inventoryId) {
             headers: {
                 // 'Authorization': `Bearer ${localStorage.getItem('token')}`,  // We are currently not using stuff from localStorage. Everything is handled on the basis of cookie.
                 'Content-Type': 'application/json'
-            }
+            },
+            credentials: 'include'
         });
         const data = await response.json(); // Even if the API returns JSON, fetch returns a Response object, which is required to be converted back to JSON
         if (data.success) {

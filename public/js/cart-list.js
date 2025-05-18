@@ -100,7 +100,8 @@ async function openItemEditForm(cartItemId) {
         const response = await fetch(`/api/cart-item/${cartItemId}`, {
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            credentials: 'include'
         });
         const data = await response.json();
         if (data.success) {
