@@ -27,7 +27,7 @@ router.post('/profile', authenticateToken, userController.profileController);
 
 router.post('/createOrder', authenticateToken, paymentController.createOrder);
 router.get('/checkout', paymentController.checkoutPage);    // used for single product direct checkout without adding to cart
-router.post('/verifyPayment', paymentController.verifyPayment);
+router.post('/verifyPayment', authenticateToken, paymentController.verifyPayment);
 
 router.post('/generate-qr', qrController.generateQR);
 router.post('/read-qr', upload.single('qrImage'), qrController.readQR);

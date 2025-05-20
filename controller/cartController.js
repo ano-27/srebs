@@ -165,7 +165,8 @@ exports.checkoutFromCart = async (req, res) => {
             receipt: `receipt_${req?.user?.id}`,
             notes: {
                 paymentDetailsArr: JSON.stringify(paymentDetailsArr),
-                skippedProducts:JSON.stringify(productErrorName)
+                skippedProducts: JSON.stringify(productErrorName),
+                productProceedID: JSON.stringify(productProceedID) 
             }
         }
         const order = await razorpayInstance.orders.create(options);
