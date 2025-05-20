@@ -13,12 +13,34 @@ exports.addToCart = async (req, res) => {
     }
     try {
         const { Cart } = models;
-        await Cart.create(              // For atomic operations, we don't need transaction
-            {
-                ...req?.body,
-                user_id: req?.user?.id
+        // Check if product is already in Cart, just increase its quantity
+        const checkExists = await Cart.findOne({
+            where: {
+                user_id: req?.user?.id,
+                product_id: req?.body?.product_id
             }
-        );
+        });
+        const sequelize = getSequelize();
+        if (checkExists) {
+            await Cart.update(
+                {
+                    quantity: sequelize.literal(`quantity + ${Number(req?.body?.quantity)}`) 
+                },
+                {
+                    where: {
+                        user_id: req?.user?.id,
+                        product_id: req?.body?.product_id
+                    }
+                }
+            );
+        } else if (!checkExists) {
+            await Cart.create(              // For atomic operations, we don't need transaction
+                {
+                    ...req?.body,
+                    user_id: req?.user?.id
+                }
+            );
+        }
         return res.status(201).json({
             success: true,
             message: `Product added to Cart` 
@@ -120,6 +142,7 @@ exports.checkoutFromCart = async (req, res) => {
 
         let amount = 0;
         let productErrorID = [], productErrorName = [], productProceedID = [], productProceedName = [];
+        let paymentDetailsArr = []  // product_id, quantity_bought
         for (let x of items) {
             const product_id = x?.dataValues?.product_id;
             const quantity = x?.dataValues?.quantity;
@@ -129,6 +152,7 @@ exports.checkoutFromCart = async (req, res) => {
                 productErrorName.push(productDetails?.name);
                 continue;
             }
+            paymentDetailsArr.push({ product_id, quantity });
             productProceedID.push(productDetails?.id);
             productProceedName.push(productDetails?.name);
             const productCost = productDetails?.price;
@@ -139,16 +163,11 @@ exports.checkoutFromCart = async (req, res) => {
             amount: amount * 100,   // An amount of 100 here in razor pay denotes - - > 1.00
             currency: "INR",
             receipt: `receipt_${req?.user?.id}`,
-            notes: [
-                {
-                    'Continuing with products': productProceedName
-                },
-                {
-                    'Skipped products due to error (if any)': productErrorName
-                }
-            ]
+            notes: {
+                paymentDetailsArr: JSON.stringify(paymentDetailsArr),
+                skippedProducts:JSON.stringify(productErrorName)
+            }
         }
-
         const order = await razorpayInstance.orders.create(options);
         return res.status(200).json(order);
     } catch (err) {
@@ -255,5 +274,12 @@ exports.editCartItem = async (req, res) => {
 }
 
 exports.getTransactionHistory = async (req, res) => {
-    const { Payment } = models;
+//     const { Payment } = models;
+//     if (!req?.user) {
+//         return res.status(400).json({
+//             success: false,
+//             message: 'Access denied'
+//         });
+//     }
+//     const payments = await Payment.
 }
