@@ -121,6 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (response2.ok) {
                 alert('Product added to cart');
             }
+            document.getElementById('scanned-product-container').style.display = 'none';
         });
 
         document.getElementById('direct-checkout-btn').addEventListener('click', async () => {

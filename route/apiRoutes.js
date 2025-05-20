@@ -26,10 +26,10 @@ router.post('/logout', userController.logoutController);
 router.post('/profile', authenticateToken, userController.profileController);
 
 router.post('/createOrder', authenticateToken, paymentController.createOrder);
-router.get('/checkout', paymentController.checkoutPage);
-router.post('/verifyPayment', paymentController.verifyPayment);
+router.get('/checkout', paymentController.checkoutPage);    // used for single product direct checkout without adding to cart
+router.post('/verifyPayment', authenticateToken, paymentController.verifyPayment);
 
-router.post('/generate-qr', qrController.generateQR);   // authenticate-owner middleware in future
+router.post('/generate-qr', qrController.generateQR);
 router.post('/read-qr', upload.single('qrImage'), qrController.readQR);
 
 router.get('/qr-options/:product_id', qrController.qrOptions);
@@ -52,7 +52,7 @@ router.delete('/product/:id', authenticateToken, productController.deleteProduct
 router.post('/add-to-cart', authenticateToken, reqValidator(cartSchema.addToCart), cartController.addToCart);
 router.delete('/remove-from-cart/:id', authenticateToken, cartController.removeFromCart);
 router.delete('/empty-cart', authenticateToken, cartController.emptyCart);
-router.post('/cart-checkout', authenticateToken, cartController.checkoutFromCart);
+router.post('/cart-checkout', authenticateToken, cartController.checkoutFromCart);  // has createOrder function of its own
 router.get('/cart-item-list', authenticateToken, cartController.cartItemList);
 router.get('/cart-item/:id', authenticateToken, cartController.getCartItemDetails);
 router.patch('/cart-item/:id', authenticateToken, reqValidator(cartSchema.editCartItem), cartController.editCartItem);

@@ -1,5 +1,6 @@
 const { createRazorPayInstance } = require('./../config/razorpayConfig.js');
-const { models } = require('./../models/index.js');
+const { models, getSequelize } = require('./../models/index.js');
+const { Op } = require('sequelize');
 const crypto = require('crypto');
 require('dotenv').config();
 
@@ -52,8 +53,31 @@ exports.checkoutPage = async(req, res) => {
 
 exports.verifyPayment = async(req, res) => {
     try {
-        const { Payment } = models;
+        const { Payment, Cart } = models;
+        const sequelize = getSequelize();
+        const dbTrans = await sequelize.transaction();
         let { order_id, payment_id, signature, user_id, role, amount } = req.body;
+        const payment = await razorpayInstance.payments.fetch(payment_id);
+        // console.log('\n== verifyPayment API payment paymentDetailsArr ==\n', payment.notes.paymentDetailsArr);
+        // console.log('\n== verifyPayment API payment productProceedID ==\n', payment.notes.productProceedID);
+        
+        // Empty cart for the successful payment of products
+        if (payment?.notes?.productProceedID) {
+            await Cart.destroy({
+                where: {
+                    user_id: req?.user?.id,
+                    product_id: {
+                        [Op.in]: JSON.parse(payment?.notes?.productProceedID)
+                    }
+                },
+                transaction: dbTrans
+            });
+        }
+        if (payment?.notes?.paymentDetailsArr) {
+            for (let x of payment?.notes?.paymentDetailsArr) {
+                // console.log('\n== x ==\n', x);
+            }
+        }
         let payment_by = null;
         if (role && (role === 'customer' || role === 'owner')) {
             payment_by = role;
@@ -69,17 +93,24 @@ exports.verifyPayment = async(req, res) => {
         const generatedSignature = hmac.digest('hex');
         
         if (generatedSignature == signature) {
-            const addPayment = await Payment.create({
-                payment_by: payment_by,
-                user_id: user_id,
-                order_id: order_id,
-                status: 'success',
-                amount: amount
-            });
+            const addPayment = await Payment.create(
+                {
+                    payment_by: payment_by,
+                    user_id: user_id,
+                    order_id: order_id,
+                    status: 'success',
+                    amount: amount
+                },
+                {
+                    transaction: dbTrans
+                }
+            );
             if (!addPayment) {
+                await dbTrans.rollback();
                 console.log('Failed to store payment record in database');
                 res.status(500).send('Failed to store payment record in database');
             }
+            await dbTrans.commit();
             res.render('pages/pay-verify.handlebars', {
                 message: 'Payment verified',
                 layout: 'main.handlebars',
@@ -88,6 +119,7 @@ exports.verifyPayment = async(req, res) => {
                 status: 'success'
             });
         } else {
+            await dbTrans.rollback();
             res.render('pages/pay-verify.handlebars', {
                 message: 'Payment not verified',
                 layout: 'main.handlebars',
