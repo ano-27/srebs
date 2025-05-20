@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
 const { DataTypes } = require ('sequelize');
-const UserModel = require('./UserModel.js');  // Function
+const UserModel = require('./UserModel.js');  // These are functions
 const PaymentModel = require('./PaymentModel.js');  
 const Cart = require('./Cart.js');
 const OfferProduct = require('./OfferProduct.js');
@@ -9,6 +9,7 @@ const Return = require('./Return.js');
 const Inventory = require('./Inventory.js');
 const Product = require('./Product.js');
 const Shop = require('./Shop.js');
+const TransactionHistory = require('./TransactionHistory.js');
 
 let sequelize = null;
 let models = {};
@@ -33,8 +34,9 @@ const dbConnection = async (database, username, password) => {  // Function to c
         models.Inventory = Inventory(sequelize, DataTypes);
         models.Product = Product(sequelize, DataTypes);
         models.Shop = Shop(sequelize, DataTypes);
+        models.TransactionHistory = TransactionHistory(sequelize, DataTypes);
 
-        // Handle asoociations
+        // Handle associations
         Object.values(models).forEach(model => {
             if (typeof model.associate === 'function') {
                 model.associate(models);

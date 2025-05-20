@@ -53,31 +53,14 @@ exports.checkoutPage = async(req, res) => {
 
 exports.verifyPayment = async(req, res) => {
     try {
-        const { Payment, Cart } = models;
+        const { Payment, Cart, TransactionHistory } = models;
         const sequelize = getSequelize();
         const dbTrans = await sequelize.transaction();
         let { order_id, payment_id, signature, user_id, role, amount } = req.body;
         const payment = await razorpayInstance.payments.fetch(payment_id);
-        // console.log('\n== verifyPayment API payment paymentDetailsArr ==\n', payment.notes.paymentDetailsArr);
+        console.log('\n== verifyPayment API payment paymentDetailsArr ==\n', payment.notes.paymentDetailsArr);
         // console.log('\n== verifyPayment API payment productProceedID ==\n', payment.notes.productProceedID);
-        
-        // Empty cart for the successful payment of products
-        if (payment?.notes?.productProceedID) {
-            await Cart.destroy({
-                where: {
-                    user_id: req?.user?.id,
-                    product_id: {
-                        [Op.in]: JSON.parse(payment?.notes?.productProceedID)
-                    }
-                },
-                transaction: dbTrans
-            });
-        }
-        if (payment?.notes?.paymentDetailsArr) {
-            for (let x of payment?.notes?.paymentDetailsArr) {
-                // console.log('\n== x ==\n', x);
-            }
-        }
+
         let payment_by = null;
         if (role && (role === 'customer' || role === 'owner')) {
             payment_by = role;
@@ -109,6 +92,37 @@ exports.verifyPayment = async(req, res) => {
                 await dbTrans.rollback();
                 console.log('Failed to store payment record in database');
                 res.status(500).send('Failed to store payment record in database');
+            }
+
+            // Empty cart for the successful payment of products
+            if (payment?.notes?.productProceedID) {
+                await Cart.destroy({
+                    where: {
+                        user_id: req?.user?.id,
+                        product_id: {
+                            [Op.in]: JSON.parse(payment?.notes?.productProceedID)
+                        }
+                    },
+                    transaction: dbTrans
+                });
+            }
+
+            let transactionData = [];
+            if (payment?.notes?.paymentDetailsArr) {
+                for (let x of JSON.parse(payment?.notes?.paymentDetailsArr)) {
+                    transactionData.push({
+                        user_id: req?.user?.id,
+                        rzp_order_id: payment?.order_id,
+                        rzp_payment_id: payment_id,
+                        bought_product_id: x?.product_id,
+                        bought_quantity: x?.quantity,
+                        payment_id: addPayment?.id
+                    });
+                }
+                // bulkCreate([{ name: 'Jack Sparrow' }, { name: 'Davy Jones' }]);
+                await TransactionHistory.bulkCreate(transactionData, {
+                    transaction: dbTrans
+                });
             }
             await dbTrans.commit();
             res.render('pages/pay-verify.handlebars', {
