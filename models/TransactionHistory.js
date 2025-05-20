@@ -43,6 +43,7 @@ module.exports = (sequelize, DataTypes) => {
     TransactionHistory.associate = (models) => {
         TransactionHistory.belongsTo(models.User, { foreignKey: 'user_id', constraints: false });
         TransactionHistory.belongsTo(models.Payment, { foreignKey: 'payment_id', constraints: false });
+        TransactionHistory.belongsTo(models.Product, { foreignKey: 'bought_product_id', constraints: false });
     }
 
     return TransactionHistory;

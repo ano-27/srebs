@@ -275,12 +275,63 @@ exports.editCartItem = async (req, res) => {
 }
 
 exports.getTransactionHistory = async (req, res) => {
-//     const { Payment } = models;
-//     if (!req?.user) {
-//         return res.status(400).json({
-//             success: false,
-//             message: 'Access denied'
-//         });
-//     }
-//     const payments = await Payment.
+    try {
+        const { Payment } = models;
+        if (!req?.user) {
+            return res.status(400).json({
+                success: false,
+                message: 'Access denied'
+            });
+        }
+        const payments = await Payment.findAll({
+            where: {
+                user_id: req?.user?.id
+            }
+        });
+        return res.status(200).json({
+            success: true,
+            message: 'Transaction history fetched',
+            payments: payments
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal Server Error'
+        });  
+    }
+}
+
+exports.getTransactionDetails = async (req, res) => {
+    try {
+        const { Payment, TransactionHistory, Product } = models;
+        if (!req?.user || !req?.params?.id) {
+            return res.status(400).json({
+                success: false,
+                message: 'Access denied'
+            });
+        }
+        const paymentDetails = await Payment.findAll({
+            where: {
+                id: req?.params?.id
+            },
+            include: {
+                model: TransactionHistory,
+                include: {
+                    model: Product
+                }
+            }
+        });
+        return res.status(200).json({
+            success: true,
+            message: 'Transaction details fetched',
+            paymentDetails: paymentDetails 
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal Server Error'
+        });  
+    }
 }
