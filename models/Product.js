@@ -39,6 +39,7 @@ module.exports = (sequelize, DataTypes) => {
         Product.belongsTo(models.Shop, { foreignKey: 'shop_id', constraints: false });
         Product.hasMany(models.Inventory, { foreignKey: 'product_id', constraints: false });
         Product.hasMany(models.Cart, { foreignKey: 'product_id', constraints: false });
+        Product.hasMany(models.TransactionHistory, { foreignKey: 'bought_product_id', constraints: false });
     }
     return Product;
 }
