@@ -27,7 +27,7 @@ exports.dashboardIndexController = async (req, res) => {
 }
 
 exports.dashboardProjectController = async (req, res) => {
-    res.render('pages/dashboard/project-management');
+    res.render('pages/dashboard/product-management');
 }
 
 exports.dashboardProjectControllerReturn = async (req, res) => {
