@@ -3,17 +3,45 @@
 <head>
     <meta charset="utf-8">
     <title>SREBS</title>
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
     {{> header}}
     
     <div class="container">
-        {{> sidebar}}
+        {{!-- {{> sidebar}} --}}
         <main>
             {{{body}}}
         </main>
     </div>
     
     {{> footer}}
+
+    <script>
+        window.updateAuthUI = function() {
+            const authLinks = document.getElementById('authLinks');
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            
+            if (authLinks) {
+                authLinks.classList.toggle('hidden', isLoggedIn);
+            }
+        };
+
+        // Menu
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle auth UI
+            window.updateAuthUI();  // To hide login register for logged in users
+
+            // Toggle dropdown menu
+            const menuToggle = document.getElementById('menuToggle');
+            const dropdownMenu = document.getElementById('dropdownMenu');
+
+            if (menuToggle && dropdownMenu) {
+                menuToggle.addEventListener('click', function () {
+                    dropdownMenu.classList.toggle('active');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

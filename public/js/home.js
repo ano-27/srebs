@@ -160,11 +160,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 localStorage.removeItem('accessToken');
                 localStorage.removeItem('refreshToken');
+                localStorage.removeItem('isLoggedIn');
+                window.updateAuthUI();
                 window.location.href = '/login';
             } catch (error) {
                 console.log(error);
                 localStorage.removeItem('accessToken');
                 localStorage.removeItem('refreshToken');
+                localStorage.removeItem('isLoggedIn');
+                window.updateAuthUI();
                 window.location.href = '/login';
             }
         }

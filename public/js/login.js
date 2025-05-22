@@ -22,6 +22,7 @@ document.getElementById('loginForm').addEventListener('submit', async(e) => {
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('user_id', data.userData.user_id);
             localStorage.setItem('role', data.userData.role);
+            window.updateAuthUI();
             // document.getElementById('message').innerHTML = '<p class="success">Login successful. Redirecting to profile in 4 seconds...</p>';
             // alert(`Login successful`);
             setTimeout(() => {
