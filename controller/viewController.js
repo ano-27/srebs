@@ -1,3 +1,6 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 exports.registerController = async(req, res) => {
     res.render('pages/register');   // Handlebars by default searches in /root/views/ for files to be rendered
 }
@@ -46,4 +49,34 @@ exports.cartController = async (req, res) => {
 
 exports.historyController = async (req, res) => {
     res.render('pages/history')
+}
+
+exports.historyDetailController = async (req, res) => {
+    res.render('pages/history-detail');
+}
+
+exports.getHistoryDetails = async (req, res) => {
+    try {
+        const historyId = req?.params?.id;
+        const response = await fetch(`${process.env.BASE_URL || 'http://localhost:8081'}/api/transaction/${historyId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Cookie': req.headers.cookie || ''
+            },
+            // credentials: 'include'
+        });
+        const data = await response.json();
+        if (data.success) {
+            res.render('pages/history-detail.handlebars', {
+                layout: 'main.handlebars',
+                data: data
+            });
+        } else {
+            res.redirect('/home');
+        }
+    } catch (err) {
+        console.log(err);
+        res.redirect('/home');
+    }
 }

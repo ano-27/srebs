@@ -1,0 +1,30 @@
+<br>
+<div class="tabs">
+    <a href="/home" class="tab active">Return to Home</a>
+</div><br>
+
+<div class = "history-detail-home">
+    <h2>Transaction History</h2>
+    <h4>Amount: <span>{{data.paymentDetails.0.amount}}</span></h4>
+    <h4>OrderId: <span>{{data.paymentDetails.0.order_id}}</span></h4>
+    <table class="history-detail-table">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Quantity Bought</th>
+                <th>Amount per unit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each data.paymentDetails.0.TransactionHistories}}
+            <tr>
+                <td>{{Product.name}}</td>
+                <td>{{bought_quantity}}</td>
+                <td>{{Product.price}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
+{{!-- <script src="/js/history-detail.js"></script> --}}
