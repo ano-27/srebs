@@ -46,16 +46,41 @@ async function updateHistoryTable(items) {
             <td>${item?.status}</td>
             <td>
                 <button class = "history-details-btn" data-id = "${item?.id}"> View Details </button>
-                <button class = "history-download-btn" data-id = "${item?.id}"> Download Bill </button>
             </td>
         `;
+        //      <button class = "history-download-btn" data-id = "${item?.id}"> Download Bill </button>
+        //  </td>
+        // `;
         tbody.append(itemRow);
     });
 }
 
 async function fetchHistoryDetails(historyId) {
-    //
+    window.location.href = `/history/${historyId}`;
+    // try {
+    //     const response = await fetch(`/api/transaction/${historyId}`, {
+    //         method: 'GET',
+    //         credentials: 'include',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         }
+    //     });
+    //     const data = await response.json();
+    //     if (data.success) {
+    //         updateHistoryDetailsTable(historyId, data);
+    //     }
+    // } catch (e) {
+    //     console.log(e);
+    // }
 }
+
+// async function updateHistoryDetailsTable(historyId, data) {
+//     res.render('pages/history-detail.handlebars', {
+//         layout: 'main.handlebars',
+//         history_id: historyId,
+//         data: data
+//     });
+// }
 
 async function downloadBill(historyId) {
     //
