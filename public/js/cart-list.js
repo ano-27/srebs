@@ -63,8 +63,8 @@ async function updateCartTable(items) {
             <td>${item?.quantity}</td>
             <td>${item?.quantity * item?.Product?.price}</td>
             <td>
-                <button class = "edit-cart-item" data-id = "${item?.id}"> Edit Quantity</button>
-                <button class = "delete-cart-item" data-id = "${item?.id}"> Remove From Cart </button>
+                <button class = "edit-cart-item btn" data-id = "${item?.id}"> Edit Quantity</button>
+                <button class = "delete-cart-item btn" data-id = "${item?.id}"> Remove From Cart </button>
             </td>
         `;
         tbody.appendChild(itemRow);
