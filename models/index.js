@@ -10,13 +10,15 @@ const Inventory = require('./Inventory.js');
 const Product = require('./Product.js');
 const Shop = require('./Shop.js');
 const TransactionHistory = require('./TransactionHistory.js');
+const dotenv = require('dotenv');
+dotenv.config();
 
 let sequelize = null;
 let models = {};
 
 const dbConnection = async (database, username, password) => {  // Function to connect with database and initialize models
     sequelize = new Sequelize(database, username, password, {
-        host: 'localhost',
+        host: process.env.PG_HOST || 'localhost',
         dialect: 'postgres'
     });
 

@@ -143,6 +143,7 @@ exports.verifyPayment = async(req, res) => {
             });
         }
     } catch (error) {
+        await dbTrans.rollback();
         console.log(error);
         res.status(500).send('Error in payment verification');
     }
