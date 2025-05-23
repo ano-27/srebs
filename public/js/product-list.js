@@ -67,14 +67,14 @@ function updateProductTable(products) {
             <td>${product.name}</td>
             <td>${product.price}</td>
             <td>
-                <button class = "toggle-inventory" data-id = "${product.id}">
+                <button class = "toggle-inventory btn" data-id = "${product.id}">
                     Show Inventory (${product.Inventories.length})
                 </button>
             </td>
             <td>
-                <button class = "edit-product" data-id = "${product.id}"> Edit </button>
-                <button class = "delete-product" data-id = "${product.id}"> Delete </button>
-                <button class = "new-batch" data-id = "${product.id}"> New Batch </button>
+                <button class = "edit-product btn" data-id = "${product.id}"> Edit </button>
+                <button class = "delete-product btn" data-id = "${product.id}"> Delete </button>
+                <button class = "new-batch btn" data-id = "${product.id}"> New Batch </button>
             </td>
         `;
         tbody.appendChild(productRow);
@@ -96,8 +96,8 @@ function updateProductTable(products) {
                     <strong>Stock:</strong> ${inventory.stock} <strong>Expiry:</strong> ${expiryDate}
                 </td>
                 <td>
-                    <button class="edit-inventory" data-id="${inventory.id}">Edit Stock</button>
-                    <button class="delete-inventory" data-id="${inventory.id}">Delete Stock</button>
+                    <button class="edit-inventory btn" data-id="${inventory.id}">Edit Stock</button>
+                    <button class="delete-inventory btn" data-id="${inventory.id}">Delete Stock</button>
                 </td>
             `;
             tbody.appendChild(inventoryRow);

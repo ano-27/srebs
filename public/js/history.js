@@ -45,7 +45,7 @@ async function updateHistoryTable(items) {
             <td>${item?.amount}</td>
             <td>${item?.status}</td>
             <td>
-                <button class = "history-details-btn" data-id = "${item?.id}"> View Details </button>
+                <button class = "history-details-btn btn" data-id = "${item?.id}"> View Details </button>
             </td>
         `;
         //      <button class = "history-download-btn" data-id = "${item?.id}"> Download Bill </button>

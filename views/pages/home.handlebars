@@ -11,7 +11,10 @@
     <div class="main-wrapper">
         <div class="main-content">
             <div class="qr-icon"></div>
-            <button class="scan-title" id="scanQrButton">Scan QR</button>
+            {{!-- <button class="scan-title btn" id="scanQrButton">Scan QR</button> --}}
+            <div style="display: flex; justify-content: center; margin-top: 2rem;">
+                <button class="scan-title btn" id="scanQrButton">Scan QR</button>
+            </div>
         </div>
 
         <!-- Hidden elements for QR scanning that will appear when scan is clicked -->
@@ -45,9 +48,9 @@
             <input type="hidden" id="product-id">
             
             <div class="product-actions">
-                <button id="add-to-cart-btn">Add to Cart</button>
-                <button id="direct-checkout-btn">Proceed to Checkout</button>
-                <button id="cancel-product-view" class="cancel-btn">Cancel</button>
+                <button id="add-to-cart-btn" class="btn">Add to Cart</button>
+                <button id="direct-checkout-btn" class="btn">Proceed to Checkout</button>
+                <button id="cancel-product-view" class="cancel-btn btn">Cancel</button>
             </div>
         </div>
     </div>
@@ -76,9 +79,9 @@
         </table>
         
         <div class="cart-actions">
-            <button id="checkout-btn">Proceed to Checkout</button>
-            <button id="empty-cart-btn">Empty Cart</button>
-            <button id="continue-shopping-btn">Continue Shopping</button>
+            <button id="checkout-btn" class="btn">Proceed to Checkout</button>
+            <button id="empty-cart-btn" class="btn">Empty Cart</button>
+            <button id="continue-shopping-btn" class="btn">Continue Shopping</button>
         </div>
     </div>
     
@@ -95,8 +98,8 @@
                 <input type="number" id="edit-cart-item-quantity" name="quantity" min="1" required>
             </div>
             
-            <button type="submit">Update Item</button>
-            <button type="button" id="cancel-edit-cart-item">Cancel</button>
+            <button type="submit"  class="btn">Update Item</button>
+            <button type="button" id="cancel-edit-cart-item"  class="btn">Cancel</button>
         </form>
     </div>
 </div>
