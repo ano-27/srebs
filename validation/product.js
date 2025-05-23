@@ -15,7 +15,9 @@ const editProduct = Joi.object({
     product_type: Joi.string().valid('singular', 'dozen', 'loose_gram', 'loose_ml').optional(),
     name: Joi.string().optional(),
     price: Joi.number().precision(2).min(0).optional(),
-    return_window: Joi.number().optional()
+    return_window: Joi.number().optional(),
+    stock: Joi.number().optional(),
+    expiry: Joi.date().optional()
 });
 
 const editProductInventory = Joi.object({

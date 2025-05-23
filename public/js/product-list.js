@@ -146,7 +146,6 @@ function handleProductFormSubmit(e) {
         stock: document.getElementById('register_stock').value || undefined,
         expiry: document.getElementById('register_expiry').value || undefined
     };
-
     // Remove unfilled values
     Object.keys(formData).forEach(key => {
         if (formData[key] === undefined) delete formData[key];
@@ -271,11 +270,28 @@ function showNewBatchForm(productId) {
 
 function handleNewBatchFormSubmit(e) {
     e.preventDefault();
-    const formData = {
-        product_id: parseInt(document.getElementById('batch_product_id').value),
-        stock: parseInt(document.getElementById('batch_stock').value),
-        expiry: document.getElementById('batch_expiry').value || undefined
-    };
+    const productId = document.getElementById('product_id').value;
+    let formData = null;
+    if (!productId) {  // Add Product - include stock/expiry
+        formData = {
+            name: document.getElementById('name').value,
+            price: parseFloat(document.getElementById('price').value),
+            product_type: document.getElementById('product_type').value,
+            return_window: parseInt(document.getElementById('return_window').value) || undefined,
+            stock: document.getElementById('register_stock').value || undefined,
+            expiry: document.getElementById('register_expiry').value || undefined
+        };
+
+        Object.keys(formData).forEach(key => {
+            if (formData[key] === undefined) delete formData[key];
+        });
+    } else {           // Update Product
+        formData = {
+            product_id: parseInt(document.getElementById('batch_product_id').value),
+            stock: parseInt(document.getElementById('batch_stock').value),
+            expiry: document.getElementById('batch_expiry').value || undefined
+        };
+    }
 
     fetch('/api/product-batch', {
         method: 'POST',
@@ -315,16 +331,24 @@ async function updateInventory() {
     const inventoryId = document.getElementById('edit_inventory_id').value;
     const stock = document.getElementById('edit_inventory_stock').value;
     const expiry = document.getElementById('edit_inventory_expiry').value;
+    
+    let requestBody = {
+        stock: parseInt(stock)
+    };
+
+    if (expiry && expiry.trim() !== '') {
+        requestBody.expiry = expiry;
+    }
+
     try {
         const response = await fetch(`/api/edit-inventory/${inventoryId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                stock: parseInt(stock),
-                expiry: expiry || null
-            }),
+            body: JSON.stringify(
+                requestBody
+            ),
             credentials: 'include',
         });
         const data = await response.json();
