@@ -270,7 +270,7 @@ function showNewBatchForm(productId) {
 
 function handleNewBatchFormSubmit(e) {
     e.preventDefault();
-    const productId = document.getElementById('product_id').value;
+    const productId = document.getElementById('batch_product_id').value;
     let formData = null;
     if (!productId) {  // Add Product - include stock/expiry
         formData = {
@@ -292,7 +292,7 @@ function handleNewBatchFormSubmit(e) {
             expiry: document.getElementById('batch_expiry').value || undefined
         };
     }
-
+    console.log('\n== form data ==\n', formData);
     fetch('/api/product-batch', {
         method: 'POST',
         headers: {

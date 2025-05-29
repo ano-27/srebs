@@ -27,7 +27,7 @@ const editProductInventory = Joi.object({
 
 const newBatchOfStock = Joi.object({
     shop_id: Joi.number().optional(),
-    product_id: Joi.number().required(),
+    product_id: Joi.number().optional(),
     expiry: Joi.date().optional(),
     stock: Joi.number().required()
 });
